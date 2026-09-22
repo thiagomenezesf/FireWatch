@@ -6,7 +6,7 @@ import requests
 # CONFIGURAÇÕES
 # ==========================================
 
-PORTA_SERIAL = "COM3"
+PORTA_SERIAL = "COM4"
 BAUD_RATE = 9600
 
 API_URL = "http://localhost:8080/api/leituras"
