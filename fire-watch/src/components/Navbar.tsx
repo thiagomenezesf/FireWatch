@@ -20,6 +20,8 @@ export default function Navbar() {
           <a href="#problema">O problema</a>
           <a href="#solucao">Solução</a>
           <a href="#tecnologia">Tecnologia</a>
+          <a href="#demonstracao">Demonstração</a>
+          <a href="#prototipo">Protótipo</a>
           <a href="#impacto">Impacto</a>
           <a href="#legislacao">Legislação</a>
         </nav>
