@@ -97,7 +97,7 @@ export default function Legislation() {
             <p>
               Ao transformar dados climáticos e ambientais em informações
               visuais de risco, o FireWatch busca oferecer suporte tecnológico
-              à prevenção e ao monitoramento de incêndios. O projeto se alinha
+              à prevenção e ao monitoramento de incêndios e queimadas. O projeto se alinha
               aos objetivos de redução de riscos e impactos ambientais
               presentes nas políticas de manejo integrado do fogo.
             </p>

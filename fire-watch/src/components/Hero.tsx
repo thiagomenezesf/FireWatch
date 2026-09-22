@@ -21,7 +21,7 @@ export default function Hero() {
 
           <p>
             O FireWatch utiliza dados climáticos, sensores IoT e inteligência
-            artificial para identificar áreas com maior risco de incêndio na
+            artificial para identificar áreas com maior risco de incêndios e queimadas na
             Serra da Paulista, em São João da Boa Vista. Além disso, os sensores agem como um sistema de alerta, enviando notificações em tempo real para os órgãos responsáveis, permitindo uma resposta rápida e eficaz sobre incêndios e queimadas que estão ocorrendo ou se iniciando.
           </p>
 

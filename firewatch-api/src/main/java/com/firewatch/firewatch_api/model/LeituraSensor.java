@@ -23,6 +23,12 @@ public class LeituraSensor {
     @Column(name = "data_hora", nullable = false)
     private LocalDateTime dataHora;
 
+    @Column(nullable = false)
+    private Double latitude;
+
+    @Column(nullable = false)
+    private Double longitude;
+
     public LeituraSensor() {
     }
 
@@ -64,5 +70,21 @@ public class LeituraSensor {
 
     public void setDataHora(LocalDateTime dataHora) {
         this.dataHora = dataHora;
+    }
+
+    public Double getLatitude() {
+    return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 }

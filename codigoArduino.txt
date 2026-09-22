@@ -3,6 +3,11 @@
 #define DHTPIN A1
 #define DHTTYPE DHT22
 
+const char* arduinoId = arduino-01;
+
+const float latitude = -21.123123213;
+const float longitude = -46.89798798;
+
 DHT dht(DHTPIN, DHTTYPE);
 
 void setup() {
@@ -19,9 +24,15 @@ void loop() {
   if (isnan(temperatura) || isnan(umidade)) {
     Serial.println("ERRO");
   } else {
+    Serial.println(arduino);
+    Serial.println(",");
     Serial.print(temperatura);
     Serial.print(",");
-    Serial.println(umidade);
+    Serial.print(umidade);
+    Serial.print(",");
+    Serial.print(latitude, 6);
+    Serial.print(",");
+    Serial.println(longitude, 6);
   }
 
   delay(10000);

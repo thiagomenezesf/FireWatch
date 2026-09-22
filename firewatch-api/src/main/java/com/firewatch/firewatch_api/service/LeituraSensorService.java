@@ -25,6 +25,8 @@ public class LeituraSensorService {
     leitura.setTemperatura(dto.getTemperatura());
     leitura.setUmidade(dto.getUmidade());
     leitura.setDataHora(LocalDateTime.now());
+    leitura.setLatitude(dto.getLatitude());
+    leitura.setLongitude(dto.getLongitude());
 
     return leituraSensorRepository.save(leitura);
 }
