@@ -27,7 +27,6 @@ export default function HomePage() {
         <Ia />
         <Legislation/>
         <CorrelatedWorks />
-        <Ia />
       </main>
 
       <Footer />
