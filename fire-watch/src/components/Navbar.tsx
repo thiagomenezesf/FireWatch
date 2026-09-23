@@ -25,6 +25,7 @@ export default function Navbar() {
           <a href="#impacto">Impacto Socioambiental</a>
           <a href="#legislacao">Legislação</a>
           <a href="#trabalhos-relacionados">Trabalhos Relacionados</a>
+          <a href="#ia">Previsão de incêndios</a>
         </nav>
 
         <Link to="/monitoramento" className="nav-button">
