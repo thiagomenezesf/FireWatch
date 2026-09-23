@@ -1055,14 +1055,17 @@ a {
 /* FOOTER */
 
 .footer {
-  padding: 40px 0 25px;
+  padding: 40px 0 25px; 
   background: #060606;
   border-top: 1px solid #181818;
+  width: 100%;
 }
 
 .footer-content {
   display: flex;
   justify-content: space-between;
+  width: 100%;
+  padding: 0 60px;
 }
 
 .footer-logo {
@@ -1101,6 +1104,8 @@ a {
 
   color: #444;
   font-size: 9px;
+  width: 100%;
+  padding: 0 60px;
 }
 
 /* GLOWS */

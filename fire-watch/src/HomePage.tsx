@@ -17,10 +17,10 @@ export default function HomePage() {
       <main>
         <Hero />
         <Problem />
+        <Impact />
         <Solution />
         <Technologies />
         <DemoPreview />
-        <Impact />
         <Legislation/>
         <CorrelatedWorks />
       </main>
