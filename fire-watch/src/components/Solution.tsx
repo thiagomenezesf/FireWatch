@@ -3,17 +3,16 @@ export default function Solution() {
     <section className="section solution-section" id="solucao">
       <div className="container">
         <div className="section-heading centered">
-          <span className="section-tag">A SOLUÇÃO</span>
+          <span className="section-tag">SOLUÇÃO</span>
 
           <h2>
-            Dados que se transformam
+            Prevenção transformada
             <br />
-            em <span>ação preventiva.</span>
+            em <span>ação em tempo real.</span>
           </h2>
 
           <p>
-            O FireWatch combina diferentes fontes de informação para gerar uma
-            visão integrada do risco de incêndio na Serra da Paulista.
+            A principal finalidade do FireWatch é atuar como um radar ambiental preventivo para combater a deteção tardia. Para isso, a ferramenta computacional integra funcionalidades centrais:
           </p>
         </div>
 

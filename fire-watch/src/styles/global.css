@@ -65,35 +65,55 @@ a {
   margin: 0 auto;
 }
 
-/* NAVBAR */
+/* =========================
+   NAVBAR
+========================= */
 
 .navbar {
   height: 80px;
+
   display: flex;
   align-items: center;
+
   position: fixed;
   top: 0;
   left: 0;
+
   width: 100%;
   z-index: 1000;
 
   background: rgba(8, 8, 8, 0.8);
   backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .navbar-content {
+  width: 100%;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  gap: 24px;
 }
 
+/* LOGO */
+
 .logo {
-  font-size: 21px;
-  font-weight: 700;
+  flex-shrink: 0;
+
   display: flex;
   align-items: center;
   gap: 8px;
+
+  font-size: 21px;
+  font-weight: 700;
+
+  white-space: nowrap;
+
+  padding: 0 40px;
 }
 
 .logo span {
@@ -107,34 +127,59 @@ a {
   object-fit: contain;
 }
 
+/* LINKS */
+
 .nav-links {
+  flex: 1;
+
   display: flex;
-  gap: 34px;
+  align-items: center;
+  justify-content: center;
+
+  gap: clamp(14px, 1.6vw, 30px);
+
+  min-width: 0;
 }
 
 .nav-links a {
-  font-size: 14px;
+  flex-shrink: 0;
+
   color: var(--text-secondary);
-  transition: 0.2s;
+
+  font-size: 13px;
+  white-space: nowrap;
+
+  transition: color 0.2s ease;
 }
 
 .nav-links a:hover {
   color: white;
 }
 
+/* BOTÃO */
+
 .nav-button {
+  flex-shrink: 0;
+
   padding: 11px 18px;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
   border: 1px solid #343434;
   border-radius: 8px;
 
   font-size: 13px;
   font-weight: 600;
 
-  display: flex;
-  gap: 12px;
-  align-items: center;
+  white-space: nowrap;
 
-  transition: 0.25s;
+  transition:
+    border-color 0.25s ease,
+    background 0.25s ease;
+
+    margin-right: 30px;
 }
 
 .nav-button:hover {
@@ -142,6 +187,146 @@ a {
   background: rgba(255, 106, 0, 0.08);
 }
 
+
+/* =========================
+   NOTEBOOKS / TELAS MÉDIAS
+========================= */
+
+@media (max-width: 1400px) {
+
+  .navbar-content {
+    gap: 16px;
+  }
+
+  .nav-links {
+    gap: 15px;
+  }
+
+  .nav-links a {
+    font-size: 12px;
+  }
+
+  .logo {
+    font-size: 19px;
+  }
+
+  .logo-image {
+    width: 32px;
+  }
+
+  .nav-button {
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+}
+
+
+/* =========================
+   TELAS MENORES
+========================= */
+
+@media (max-width: 1150px) {
+
+  .nav-links {
+    gap: 11px;
+  }
+
+  .nav-links a {
+    font-size: 11px;
+  }
+
+  .nav-button {
+    gap: 7px;
+    padding: 9px 12px;
+    font-size: 11px;
+  }
+}
+
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 1000px) {
+
+  .navbar {
+    height: 70px;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .navbar-content {
+    justify-content: space-between;
+  }
+
+  .logo {
+    font-size: 19px;
+  }
+
+  .logo-image {
+    width: 32px;
+  }
+
+  .nav-button {
+    padding: 9px 14px;
+    font-size: 11px;
+  }
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 520px) {
+
+  .navbar {
+    height: 64px;
+  }
+
+  .navbar-content {
+    gap: 10px;
+  }
+
+  .logo {
+    font-size: 17px;
+    gap: 6px;
+  }
+
+  .logo-image {
+    width: 29px;
+  }
+
+  .nav-button {
+    padding: 8px 11px;
+    font-size: 10px;
+    gap: 6px;
+  }
+}
+
+
+/* CELULARES MUITO PEQUENOS */
+
+@media (max-width: 370px) {
+
+  .nav-button span {
+    display: none;
+  }
+
+  .nav-button {
+    padding: 8px 9px;
+  }
+
+  .logo {
+    font-size: 16px;
+  }
+
+  .logo-image {
+    width: 27px;
+  }
+}
 /* HERO */
 
 .hero {
@@ -870,7 +1055,7 @@ a {
 /* FOOTER */
 
 .footer {
-  padding: 70px 0 25px;
+  padding: 40px 0 25px;
   background: #060606;
   border-top: 1px solid #181818;
 }
@@ -878,7 +1063,6 @@ a {
 .footer-content {
   display: flex;
   justify-content: space-between;
-  padding-bottom: 60px;
 }
 
 .footer-logo {
@@ -1585,5 +1769,189 @@ a {
   .data-flow {
     align-items: flex-start;
     flex-direction: column;
+  }
+}
+
+/* RELATED WORKS */
+
+.related-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.related-header {
+  max-width: 720px;
+  margin-bottom: 55px;
+}
+
+.related-header h2 {
+  margin-top: 15px;
+  margin-bottom: 20px;
+  font-size: clamp(36px, 5vw, 58px);
+  letter-spacing: -2px;
+  line-height: 1.05;
+}
+
+.related-header h2 span {
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.related-header > p {
+  max-width: 650px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.related-card {
+  position: relative;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  min-height: 440px;
+
+  background: #0d0d0d;
+  border: 1px solid #222;
+  border-radius: 12px;
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.related-card:hover {
+  transform: translateY(-4px);
+  border-color: #343434;
+}
+
+.related-card-top {
+  margin-bottom: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.related-number {
+  color: var(--orange);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.related-category {
+  color: #555;
+  font-size: 7px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+}
+
+.related-card h3 {
+  margin-bottom: 20px;
+  color: #e5e5e5;
+  font-size: 19px;
+  line-height: 1.25;
+  letter-spacing: -0.5px;
+}
+
+.related-card > p {
+  margin-bottom: 15px;
+  color: #777;
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+.related-reference {
+  margin-top: auto;
+  padding-top: 22px;
+  border-top: 1px solid #222;
+}
+
+.related-reference > span {
+  display: block;
+  margin-bottom: 10px;
+
+  color: var(--orange);
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.related-reference p {
+  color: #555;
+  font-size: 8px;
+  line-height: 1.65;
+}
+
+.related-reference em {
+  color: #777;
+}
+
+/* FIREWATCH CONNECTION */
+
+.related-firewatch {
+  margin-top: 14px;
+  padding: 28px 32px;
+
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 30px;
+  align-items: center;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 106, 0, 0.06),
+      transparent 45%
+    ),
+    #0c0c0c;
+
+  border: 1px solid #222;
+  border-radius: 10px;
+}
+
+.related-firewatch-label {
+  color: var(--orange);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+}
+
+.related-firewatch p {
+  color: #777;
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+@media (max-width: 950px) {
+  .related-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .related-card {
+    min-height: auto;
+  }
+
+  .related-reference {
+    margin-top: 25px;
+  }
+}
+
+@media (max-width: 650px) {
+  .related-firewatch {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .related-card {
+    padding: 25px 22px;
   }
 }

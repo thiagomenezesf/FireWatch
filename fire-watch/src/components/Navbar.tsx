@@ -19,11 +19,12 @@ export default function Navbar() {
         <nav className="nav-links">
           <a href="#problema">O problema</a>
           <a href="#solucao">Solução</a>
-          <a href="#tecnologia">Tecnologia</a>
+          <a href="#tecnologia">Construção</a>
           <a href="#demonstracao">Demonstração</a>
           <a href="#prototipo">Protótipo</a>
-          <a href="#impacto">Impacto</a>
+          <a href="#impacto">Impacto Socioambiental</a>
           <a href="#legislacao">Legislação</a>
+          <a href="#trabalhos-relacionados">Trabalhos Relacionados</a>
         </nav>
 
         <Link to="/monitoramento" className="nav-button">

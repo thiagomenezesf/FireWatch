@@ -7,6 +7,7 @@ import DemoPreview from "./components/DemoPreview";
 import Impact from "./components/Impact";
 import Footer from "./components/Footer";
 import Legislation from "./components/Legislation";
+import CorrelatedWorks from "./components/CorrelatedWorks";
 
 export default function HomePage() {
   return (
@@ -21,6 +22,7 @@ export default function HomePage() {
         <DemoPreview />
         <Impact />
         <Legislation/>
+        <CorrelatedWorks />
       </main>
 
       <Footer />

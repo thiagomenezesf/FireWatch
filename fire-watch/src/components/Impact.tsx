@@ -4,23 +4,22 @@ export default function Impact() {
       <div className="container">
         <div className="impact-content">
           <div className="section-heading">
-            <span className="section-tag">IMPACTO</span>
+          <span className="section-tag">IMPACTO SOCIOAMBIENTAL</span>
 
-            <h2>
-              Tecnologia a serviço
-              <br />
-              da <span>preservação.</span>
-            </h2>
+          <h2>
+            A relação da ferramenta com a
+            <br />
+            <span>Serra da Paulista.</span>
+          </h2>
 
-            <p>
-              O FireWatch foi pensado como uma ferramenta de apoio à tomada de
-              decisão, permitindo que equipes direcionem atenção e recursos às
-              regiões que apresentam maior risco.
-            </p>
-          </div>
-
+          <p>
+            O FireWatch foi projetado para responder diretamente às especificidades do problema socioambiental analisado: as recorrentes queimadas e incêndios na Serra da Paulista. A tecnologia atua como um escudo para a biodiversidade (Mata Atlântica e Cerrado) e para a qualidade do ar, traduzindo dados em preservação.
+          </p>
+        </div>
+          
           <div className="impact-list">
             <div className="impact-item">
+              
               <span>01</span>
               <div>
                 <h3>Resposta antecipada</h3>
@@ -56,16 +55,16 @@ export default function Impact() {
         </div>
 
         <div className="audience">
-          <span>Desenvolvido para apoiar</span>
+          <span>PERFIL DE USUÁRIO (OPERAÇÃO TÉCNICA)</span>
 
           <div className="audience-items">
             <strong>Defesa Civil</strong>
             <i></i>
             <strong>Corpo de Bombeiros</strong>
             <i></i>
-            <strong>Órgãos ambientais</strong>
+            <strong>Órgãos Ambientais</strong>
             <i></i>
-            <strong>Brigadistas</strong>
+            <strong>Brigadistas Voluntários</strong>
           </div>
         </div>
       </div>

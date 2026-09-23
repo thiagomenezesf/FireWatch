@@ -42,13 +42,16 @@ export default function Technologies() {
     <section className="section technologies-section" id="tecnologia">
       <div className="container">
         <div className="section-heading">
-          <span className="section-tag">TECNOLOGIA</span>
+          <span className="section-tag">PROCESSO DE CONSTRUÇÃO</span>
 
           <h2>
-            Diferentes tecnologias.
-            <br />
-            <span>Um único objetivo.</span>
+            Arquitetura da <br />
+            <span>ferramenta computacional.</span>
           </h2>
+          
+          <p style={{ marginTop: '16px', color: '#a1a1aa', maxWidth: '600px' }}>
+            O desenvolvimento do FireWatch foi estruturado em diferentes camadas de software e hardware, integrando a captação física de dados com o processamento em nuvem.
+          </p>
         </div>
 
         <div className="technologies-grid">

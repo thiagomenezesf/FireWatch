@@ -12,9 +12,9 @@ export default function Problem() {
           </h2>
 
           <p>
-            A Serra da Paulista sofre com incêndios durante períodos de
-            estiagem. A detecção tardia dificulta a resposta e amplia os danos
-            ambientais.
+            A Serra da Paulista sofre com incêndios durante períodos de estiagem. 
+            Apenas em 2020, um único evento chegou a consumir cerca de 500 hectares de vegetação no município. 
+            A detecção tardia dificulta a resposta e amplia os danos ambientais.
           </p>
         </div>
 
@@ -26,8 +26,7 @@ export default function Problem() {
             <h3>Detecção tardia</h3>
 
             <p>
-              O combate muitas vezes começa após a identificação visual de
-              fumaça ou fogo, quando o incêndio já pode ter se espalhado.
+              O combate depende quase exclusivamente de denúncias visuais feitas por moradores quando a fumaça sobe. Quando as equipes chegam, o incêndio já pode ter se espalhado.
             </p>
           </article>
 
@@ -38,8 +37,7 @@ export default function Problem() {
             <h3>Períodos críticos</h3>
 
             <p>
-              Baixa umidade, altas temperaturas e ventos durante a estiagem
-              aumentam significativamente as condições favoráveis ao fogo.
+              Durante os meses de estiagem, a região concentra focos críticos de calor no estado de São Paulo, combinando baixa umidade, altas temperaturas e ventos fortes.
             </p>
           </article>
 
@@ -50,8 +48,7 @@ export default function Problem() {
             <h3>Impacto ambiental</h3>
 
             <p>
-              As queimadas ameaçam a vegetação, a fauna local, a qualidade do
-              ar e o equilíbrio ambiental da região.
+              As queimadas ameaçam importantes remanescentes de Mata Atlântica e Cerrado, além de colocar em risco mais de 120 espécies de fauna nativa catalogadas.
             </p>
           </article>
         </div>

@@ -97,9 +97,11 @@ export default function Legislation() {
             <p>
               Ao transformar dados climáticos e ambientais em informações
               visuais de risco, o FireWatch busca oferecer suporte tecnológico
-              à prevenção e ao monitoramento de incêndios e queimadas. O projeto se alinha
-              aos objetivos de redução de riscos e impactos ambientais
-              presentes nas políticas de manejo integrado do fogo.
+              à prevenção e ao monitoramento de incêndios e queimadas. 
+              Atuando em conformidade com a Lei Municipal Nº 3.694/2014, 
+              o projeto alinha-se aos objetivos das políticas de manejo integrado, 
+              utilizando como referência para o estudo do problema socioambiental 
+              bases consolidadas como o BDQueimadas (INPE) e a Plataforma MapBiomas Fogo.
             </p>
           </div>
 
