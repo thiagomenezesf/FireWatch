@@ -24,6 +24,7 @@ export default function HomePage() {
         <Technologies />
         <DemoPreview />
         <Test />
+        <Ia />
         <Legislation/>
         <CorrelatedWorks />
         <Ia />
