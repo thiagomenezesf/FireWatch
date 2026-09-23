@@ -21,6 +21,7 @@ export default function Navbar() {
           <a href="#impacto">Impacto Socioambiental</a>
           <a href="#solucao">Solução</a>
           <a href="#tecnologia">Construção</a>
+          <a href="#ia">Previsão de incêndios</a>
           <a href="#prototipo">Protótipo</a>
           <a href="#legislacao">Legislação</a>
           <a href="#trabalhos-relacionados">Trabalhos Relacionados</a>
