@@ -11,11 +11,12 @@ interface SensorNetworkItem {
 }
 
 const sensorNetwork: SensorNetworkItem[] = [
-  { id: 'S-01', location: 'Pico Norte', temperature: 31.5, humidity: 21, fireProbability: 72, status: 'atencao' },
-  { id: 'S-02', location: 'Vale Central', temperature: 29.8, humidity: 25, fireProbability: 38, status: 'normal' },
-  { id: 'S-03', location: 'Mirante SUL', temperature: 30.1, humidity: 24, fireProbability: 44, status: 'normal' },
-  { id: 'S-04', location: 'Pedra Balão', temperature: 32.1, humidity: 18, fireProbability: 81, status: 'critico' },
-  { id: 'S-05', location: 'Parque da Cachoeira', temperature: 28.9, humidity: 27, fireProbability: 29, status: 'normal' },
+  { id: 'S-01', location: 'Mirante Serra da Paulista', temperature: 31.5, humidity: 21, fireProbability: 72, status: 'atencao' },
+  { id: 'S-02', location: 'Região Pedra Balão', temperature: 29.8, humidity: 25, fireProbability: 38, status: 'normal' },
+  { id: 'S-03', location: 'Pesqueiro Bambu Amarelo', temperature: 30.1, humidity: 24, fireProbability: 44, status: 'normal' },
+  { id: 'S-04', location: 'Cruz Cruzeiro do Sul', temperature: 32.1, humidity: 18, fireProbability: 81, status: 'critico' },
+  { id: 'S-05', location: 'Capelinha Nossa Senhora', temperature: 30.8, humidity: 27, fireProbability: 29, status: 'normal' },
+  { id: 'S-06', location: 'Vinicola Lanchelotti', temperature: 29.5, humidity: 25, fireProbability: 50, status: 'normal' }
 ];
 
 const statusLabelMap = {

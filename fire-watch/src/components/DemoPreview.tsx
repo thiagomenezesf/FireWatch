@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import arduinoPrototype from "../assets/arduino-prototype.png";
-import FireWatchLogo from "../assets/FireWatchLogo.png";
 
 export default function DemoPreview() {
   return (
