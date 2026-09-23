@@ -1,0 +1,103 @@
+const float listaLatitudes[30] = {
+  // Mirante Serra da Paulista (Arduino_01 a 05)
+  -21.947222, -21.946500, -21.948100, -21.945800, -21.947900,
+  // Região Pedra Balão (Arduino_06 a 10)
+  -21.996111, -21.995000, -21.997200, -21.994100, -21.996800,
+  // Pesqueiro Bambu Amarelo (Arduino_11 a 15)
+  -21.967600, -21.966900, -21.968500, -21.965500, -21.967900,
+  // Capelinha Nossa Senhora (Arduino_16 a 20)
+  -21.951111, -21.950200, -21.952500, -21.949500, -21.951900,
+  // Vinicola Lanchellotti (Arduino_21 a 25)
+  -21.938889, -21.937500, -21.939900, -21.936800, -21.939200,
+  // Cruz Cruzeiro do Sul (Arduino_26 a 30)
+  -21.980556, -21.979100, -21.981800, -21.978500, -21.981100
+};
+
+const float listaLongitudes[30] = {
+  // Mirante Serra da Paulista (Arduino_01 a 05)
+  -46.758333, -46.759100, -46.757200, -46.760200, -46.756500,
+  // Região Pedra Balão (Arduino_06 a 10)
+  -46.777778, -46.776500, -46.778900, -46.775200, -46.779100,
+  // Pesqueiro Bambu Amarelo (Arduino_11 a 15)
+  -46.788800, -46.787500, -46.789900, -46.786100, -46.789500,
+  // Capelinha Nossa Senhora (Arduino_16 a 20)
+  -46.741667, -46.742800, -46.740500, -46.743900, -46.739800,
+  // Vinicola Lanchellotti (Arduino_21 a 25)
+  -46.722222, -46.723500, -46.721000, -46.724800, -46.720100,
+  // Cruz Cruzeiro do Sul (Arduino_26 a 30)
+  -46.791667, -46.790200, -46.792900, -46.789100, -46.793200
+};
+
+// Declaração das variáveis que faltavam no código original
+float latitude = 0.0000;
+float longitude = 0.0000;
+String regiao = "";
+
+void setup() { 
+  Serial.begin(9600);
+
+  while (!Serial) {
+    ; // Espera a conexão ser estabelecida
+  }
+
+  delay(1000); 
+  
+  // Inicializa o gerador de números aleatórios com uma leitura analógica flutuante
+  randomSeed(analogRead(0)); 
+} 
+
+void loop() {
+  int arduinoValue = random(1, 31);
+  String arduino = "Arduino_0" + String(arduinoValue);
+
+  switch(arduinoValue) {
+    case 1 ... 5:
+      regiao = "Mirante Serra da Paulista";
+      break;
+    case 6 ... 10:
+      regiao = "Região Pedra Balão";
+      break;
+    case 11 ... 15:
+      regiao = "Pesqueiro Bambu Amarelo";
+      break;
+    case 16 ... 20:
+      regiao = "Capelinha Nossa Senhora";
+      break;
+    case 21 ... 25:
+      regiao = "Vinicola Lanchellotti";
+      break;
+    case 26 ... 30:
+      regiao = "Cruz Cruzeiro do Sul";
+      break;
+    default:
+      regiao = "Regiao Desconhecida";
+      break;
+  }
+
+  latitude = listaLatitudes[arduinoValue - 1];
+  longitude = listaLongitudes[arduinoValue - 1]; 
+
+  // random(min, max) gera números inteiros. 
+  // Dividimos por 10.0 para obter números decimais (float).
+  float temperatura = random(150, 400) / 10.0; // Gera temperatura entre 15.0 e 40.0 °C
+  float umidade = random(300, 900) / 10.0;     // Gera umidade entre 30.0% e 90.0%
+
+  if (isnan(temperatura) || isnan(umidade)) { 
+    Serial.println("ERRO"); 
+  } else { 
+    // Corrigido para Serial.print para manter tudo na mesma linha (conforme o padrão CSV)
+    Serial.print(arduino); 
+    Serial.print(","); 
+    Serial.print(temperatura); 
+    Serial.print(","); 
+    Serial.print(umidade); 
+    Serial.print(","); 
+    Serial.print(latitude, 6); 
+    Serial.print(","); 
+    Serial.print(longitude, 6); // println no final para pular a linha para o próximo envio
+    Serial.print(",");
+    Serial.println(regiao);
+  } 
+  
+  delay(10000); 
+}

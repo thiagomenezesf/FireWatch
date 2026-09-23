@@ -27,7 +27,7 @@ export default function Navbar() {
           <a href="#demonstracao">Demonstração</a>
         </nav>
 
-        <Link to="/monitoramento" className="nav-button">
+        <Link to="/monitoramentoTeste" className="nav-button">
           Ver demonstração
           <span>→</span>
         </Link>
