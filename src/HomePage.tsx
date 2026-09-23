@@ -6,6 +6,7 @@ import Technologies from "./components/Technologies";
 import DemoPreview from "./components/DemoPreview";
 import Impact from "./components/Impact";
 import Footer from "./components/Footer";
+import Ia from "./components/Ia";
 
 export default function HomePage() {
   return (
@@ -19,6 +20,7 @@ export default function HomePage() {
         <Technologies />
         <DemoPreview />
         <Impact />
+        <Ia />
       </main>
 
       <Footer />

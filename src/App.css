@@ -182,3 +182,215 @@
     border-right-color: var(--border);
   }
 }
+
+
+
+
+
+/* =========================================
+   Estilos Modernos para a Seção de IA
+   ========================================= */
+
+.ia-section {
+  padding: 5rem 2rem;
+  background-color: #0f1115; /* Fundo escuro padrão */
+  color: #ffffff;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.ia-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Cabeçalho */
+.ia-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.ia-tag {
+  display: inline-block;
+  color: #ff4b4b;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  background: rgba(255, 75, 75, 0.1);
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+}
+
+.ia-header h2 {
+  font-size: 2.5rem;
+  line-height: 1.2;
+  margin: 0;
+  font-weight: 800;
+}
+
+.ia-header span {
+  color: #8b949e;
+  font-weight: 400;
+}
+
+/* Card do Formulário */
+.ia-card {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.ia-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.ia-full-width {
+  grid-column: 1 / -1;
+}
+
+/* Inputs e Labels */
+.ia-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ia-form-group label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #c9d1d9;
+}
+
+.ia-input-wrapper input,
+.ia-input-wrapper select {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.ia-input-wrapper input::placeholder {
+  color: #484f58;
+}
+
+.ia-input-wrapper input:focus,
+.ia-input-wrapper select:focus {
+  outline: none;
+  border-color: #ff4b4b;
+  box-shadow: 0 0 0 3px rgba(255, 75, 75, 0.15);
+}
+
+/* Botão de Submit */
+.ia-submit-btn {
+  grid-column: 1 / -1;
+  margin-top: 1rem;
+  padding: 1.1rem;
+  background: linear-gradient(135deg, #ff4b4b 0%, #d82b2b 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+
+.ia-submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 75, 75, 0.3);
+}
+
+.ia-submit-btn:disabled {
+  background: #30363d;
+  color: #8b949e;
+  cursor: not-allowed;
+}
+
+/* Animação de Loading no botão */
+.ia-submit-btn.loading {
+  position: relative;
+  color: transparent;
+}
+.ia-submit-btn.loading::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 0; left: 0; bottom: 0; right: 0;
+  margin: auto;
+  border: 3px solid transparent;
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: ia-spin 1s linear infinite;
+}
+
+@keyframes ia-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Card de Resultado (com cor dinâmica) */
+.ia-result-card {
+  margin-top: 2.5rem;
+  padding: 2rem;
+  background: rgba(13, 17, 23, 0.6);
+  border-radius: 12px;
+  text-align: center;
+  border: 2px solid var(--risk-color);
+  animation: ia-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ia-result-card h3 {
+  margin: 0 0 1rem 0;
+  color: #8b949e;
+  font-size: 1rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ia-risk-value {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+  color: #ffffff;
+}
+
+.ia-risk-label {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.ia-risk-error {
+  color: #ef4444;
+  font-weight: 500;
+}
+
+@keyframes ia-slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 640px) {
+  .ia-form {
+    grid-template-columns: 1fr;
+  }
+  .ia-card {
+    padding: 1.5rem;
+  }
+  .ia-header h2 {
+    font-size: 2rem;
+  }
+}

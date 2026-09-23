@@ -21,6 +21,7 @@ export default function Navbar() {
           <a href="#solucao">Solução</a>
           <a href="#tecnologia">Tecnologia</a>
           <a href="#impacto">Impacto</a>
+          <a href="#ia">Previsão de incêndios</a>
         </nav>
 
         <Link to="/monitoramento" className="nav-button">
