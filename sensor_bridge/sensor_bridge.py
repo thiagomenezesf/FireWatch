@@ -21,7 +21,8 @@ def enviar_leitura(
     temperatura,
     umidade,
     latitude,
-    longitude
+    longitude,
+    regiao
 ):
 
     dados = {
@@ -29,7 +30,8 @@ def enviar_leitura(
         "temperatura": temperatura,
         "umidade": umidade,
         "latitude": latitude,
-        "longitude": longitude
+        "longitude": longitude,
+        "regiao": regiao
     }
 
     try:
@@ -46,7 +48,8 @@ def enviar_leitura(
                 f"Temp: {temperatura:.2f} °C | "
                 f"Umidade: {umidade:.2f}% | "
                 f"Lat: {latitude:.6f} | "
-                f"Lon: {longitude:.6f}"
+                f"Lon: {longitude:.6f} | "
+                f"Região: {regiao}"
             )
 
         else:
@@ -115,7 +118,7 @@ def processar_linha(linha):
 
     partes = linha.split(",")
 
-    if len(partes) != 5:
+    if len(partes) != 6:
         print(
             f"[IGNORADO] Formato inesperado: {linha}"
         )
@@ -128,6 +131,7 @@ def processar_linha(linha):
         umidade = float(partes[2])
         latitude = float(partes[3])
         longitude = float(partes[4])
+        regiao = partes[5].strip()
 
     except ValueError:
         print(
@@ -170,6 +174,9 @@ def processar_linha(linha):
             f"{longitude}"
         )
         return
+    if not regiao:
+        print("[IGNORADO] Região sem identificação.")
+        return
 
     # ======================================
     # ENVIA PARA O SPRING BOOT
@@ -180,7 +187,8 @@ def processar_linha(linha):
         temperatura,
         umidade,
         latitude,
-        longitude
+        longitude,
+        regiao
     )
 
 

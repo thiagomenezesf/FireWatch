@@ -32,6 +32,9 @@ public class LeituraSensorDTO {
     @DecimalMax(value = "180.0", message = "Longitude inválida.")
     private Double longitude;
 
+    @NotBlank(message = "A região é obrigatória.")
+    private String regiao;
+
     public LeituraSensorDTO() {
     }
 
@@ -73,5 +76,13 @@ public class LeituraSensorDTO {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public String getRegiao() {
+        return regiao;
+    }
+
+    public void setRegiao(String regiao) {
+        this.regiao = regiao;
     }
 }
