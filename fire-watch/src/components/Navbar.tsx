@@ -22,6 +22,8 @@ export default function Navbar() {
           <a href="#solucao">Solução</a>
           <a href="#tecnologia">Construção</a>
           <a href="#prototipo">Protótipo</a>
+          <a href="#testes">Testes</a>
+          <a href="#ia">Previsão de incêndios</a>
           <a href="#legislacao">Legislação</a>
           <a href="#trabalhos-relacionados">Trabalhos Relacionados</a>
           <a href="#demonstracao">Demonstração</a>

@@ -1,4 +1,12 @@
-const API_URL = "http://localhost:8080/api/leituras";
+const API_BASE_URL = "http://localhost:8080/api";
+
+const LEITURAS_URL = `${API_BASE_URL}/leituras`;
+const PREDICOES_URL = `${API_BASE_URL}/predicoes`;
+
+
+// ==========================================
+// INTERFACES
+// ==========================================
 
 export interface LeituraSensor {
   id?: number;
@@ -8,21 +16,37 @@ export interface LeituraSensor {
   latitude: number;
   longitude: number;
   regiao: string;
+  bioma: string;
   dataHora?: string;
 }
 
-export type NovaLeituraSensor = Omit<LeituraSensor, "id" | "dataHora">;
+export interface PredicaoRisco {
+  id: number;
+  sensorId: string;
+  risco: number;
+  dataHora: string;
+
+  leitura: LeituraSensor;
+}
+
+export type NovaLeituraSensor = Omit<
+  LeituraSensor,
+  "id" | "dataHora"
+>;
 
 
 // ==========================================
-// GET - LISTAR TODAS
+// GET - LISTAR TODAS AS LEITURAS
 // ==========================================
 
 export async function listarLeituras(): Promise<LeituraSensor[]> {
-  const response = await fetch(API_URL);
+
+  const response = await fetch(LEITURAS_URL);
 
   if (!response.ok) {
-    throw new Error("Erro ao buscar as leituras.");
+    throw new Error(
+      "Erro ao buscar as leituras."
+    );
   }
 
   return response.json();
@@ -30,17 +54,21 @@ export async function listarLeituras(): Promise<LeituraSensor[]> {
 
 
 // ==========================================
-// GET - BUSCAR POR ID
+// GET - BUSCAR LEITURA POR ID
 // ==========================================
 
 export async function buscarLeituraPorId(
   id: number
 ): Promise<LeituraSensor> {
 
-  const response = await fetch(`${API_URL}/${id}`);
+  const response = await fetch(
+    `${LEITURAS_URL}/${id}`
+  );
 
   if (!response.ok) {
-    throw new Error(`Erro ao buscar a leitura ${id}.`);
+    throw new Error(
+      `Erro ao buscar a leitura ${id}.`
+    );
   }
 
   return response.json();
@@ -48,25 +76,30 @@ export async function buscarLeituraPorId(
 
 
 // ==========================================
-// POST - CRIAR
+// POST - CRIAR LEITURA
 // ==========================================
 
 export async function criarLeitura(
   leitura: NovaLeituraSensor
 ): Promise<LeituraSensor> {
 
-  const response = await fetch(API_URL, {
-    method: "POST",
+  const response = await fetch(
+    LEITURAS_URL,
+    {
+      method: "POST",
 
-    headers: {
-      "Content-Type": "application/json",
-    },
+      headers: {
+        "Content-Type": "application/json",
+      },
 
-    body: JSON.stringify(leitura),
-  });
+      body: JSON.stringify(leitura),
+    }
+  );
 
   if (!response.ok) {
-    throw new Error("Erro ao cadastrar a leitura.");
+    throw new Error(
+      "Erro ao cadastrar a leitura."
+    );
   }
 
   return response.json();
@@ -74,45 +107,22 @@ export async function criarLeitura(
 
 
 // ==========================================
-// PUT - ATUALIZAR
+// GET - LISTAR TODAS AS PREDIÇÕES
 // ==========================================
 
-// export async function atualizarLeitura(
-//   id: number,
-//   leitura: NovaLeituraSensor
-// ): Promise<LeituraSensor> {
+export async function listarPredicoes(): Promise<
+  PredicaoRisco[]
+> {
 
-//   const response = await fetch(`${API_URL}/${id}`, {
-//     method: "PUT",
+  const response = await fetch(
+    PREDICOES_URL
+  );
 
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
+  if (!response.ok) {
+    throw new Error(
+      "Erro ao buscar as predições de risco."
+    );
+  }
 
-//     body: JSON.stringify(leitura),
-//   });
-
-//   if (!response.ok) {
-//     throw new Error(`Erro ao atualizar a leitura ${id}.`);
-//   }
-
-//   return response.json();
-// }
-
-
-// // ==========================================
-// // DELETE - EXCLUIR
-// // ==========================================
-
-// export async function excluirLeitura(
-//   id: number
-// ): Promise<void> {
-
-//   const response = await fetch(`${API_URL}/${id}`, {
-//     method: "DELETE",
-//   });
-
-//   if (!response.ok) {
-//     throw new Error(`Erro ao excluir a leitura ${id}.`);
-//   }
-// }
+  return response.json();
+}

@@ -32,6 +32,7 @@ const float listaLongitudes[30] = {
 float latitude = 0.0000;
 float longitude = 0.0000;
 String regiao = "";
+String bioma = "";
 
 void setup() { 
   Serial.begin(9600);
@@ -53,24 +54,31 @@ void loop() {
   switch(arduinoValue) {
     case 1 ... 5:
       regiao = "Mirante Serra da Paulista";
+      bioma = "Mata Atlantica";
       break;
     case 6 ... 10:
       regiao = "Região Pedra Balão";
+      bioma = "Cerrado";
       break;
     case 11 ... 15:
       regiao = "Pesqueiro Bambu Amarelo";
+      bioma = "Mata Atlantica";
       break;
     case 16 ... 20:
       regiao = "Capelinha Nossa Senhora";
+      bioma = "Mata Atlantica";
       break;
     case 21 ... 25:
       regiao = "Vinicola Lanchellotti";
+      bioma = "Mata Atlantica";
       break;
     case 26 ... 30:
       regiao = "Cruz Cruzeiro do Sul";
+      bioma = "Cerrado";
       break;
     default:
       regiao = "Regiao Desconhecida";
+      bioma = "Ignorado";
       break;
   }
 
@@ -96,7 +104,9 @@ void loop() {
     Serial.print(","); 
     Serial.print(longitude, 6); // println no final para pular a linha para o próximo envio
     Serial.print(",");
-    Serial.println(regiao);
+    Serial.print(regiao);
+    Serial.print(",");
+    Serial.println(bioma);
   } 
   
   delay(10000); 

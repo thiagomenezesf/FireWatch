@@ -35,6 +35,9 @@ public class LeituraSensorDTO {
     @NotBlank(message = "A região é obrigatória.")
     private String regiao;
 
+    @NotBlank(message = "O bioma é obrigatório.")
+    private String bioma;
+
     public LeituraSensorDTO() {
     }
 
@@ -84,5 +87,13 @@ public class LeituraSensorDTO {
 
     public void setRegiao(String regiao) {
         this.regiao = regiao;
+    }
+
+    public String getBioma() {
+        return bioma;
+    }
+
+    public void setBioma(String bioma) {
+        this.bioma = bioma;
     }
 }

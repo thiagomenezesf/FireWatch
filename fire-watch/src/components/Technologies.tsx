@@ -1,9 +1,9 @@
 const technologies = [
   {
     number: "01",
-    title: "Aplicação Web",
+    title: "Internet das Coisas",
     description:
-      "Interface acessível por computador ou smartphone para centralizar o monitoramento.",
+      "Simulação de uma rede de sensores ambientais posicionados ao longo da serra.",
   },
   {
     number: "02",
@@ -13,28 +13,29 @@ const technologies = [
   },
   {
     number: "03",
-    title: "Internet das Coisas",
-    description:
-      "Simulação de uma rede de sensores ambientais posicionados ao longo da serra.",
-  },
-  {
-    number: "04",
     title: "Machine Learning",
     description:
       "Modelos computacionais para análise das variáveis e identificação de padrões de risco.",
   },
   {
-    number: "05",
+    number: "04",
     title: "Geoprocessamento",
     description:
       "Representação espacial das informações e geração das zonas de risco no mapa.",
   },
   {
-    number: "06",
+    number: "05",
     title: "Heatmap",
     description:
       "Visualização intuitiva da intensidade do risco através de diferentes níveis de calor.",
   },
+  {
+    number: "06",
+    title: "Aplicação Web",
+    description:
+      "Interface acessível por computador ou smartphone para centralizar o monitoramento.",
+  }
+  
 ];
 
 export default function Technologies() {

@@ -28,6 +28,7 @@ public class LeituraSensorService {
     leitura.setLatitude(dto.getLatitude());
     leitura.setLongitude(dto.getLongitude());
     leitura.setRegiao(dto.getRegiao());
+    leitura.setBioma(dto.getBioma());
 
     return leituraSensorRepository.save(leitura);
 }
