@@ -35,46 +35,6 @@ interface RegiaoResumo extends RegiaoConfig {
 
 /* =========================================================
    REGIÕES MONITORADAS
-========================================================= */
-
-const regioes: RegiaoConfig[] = [
-
-  {
-    id: 1,
-    nome: 'Mirante Serra da Paulista',
-    slug: 'mirante-serra-da-paulista'
-  },
-
-  {
-    id: 2,
-    nome: 'Região Pedra Balão',
-    slug: 'regiao-pedra-balao'
-  },
-
-  {
-    id: 3,
-    nome: 'Pesqueiro Bambu Amarelo',
-    slug: 'pesqueiro-bambu-amarelo'
-  },
-
-  {
-    id: 4,
-    nome: 'Capelinha Nossa Senhora',
-    slug: 'capelinha-nossa-senhora'
-  },
-
-  {
-    id: 5,
-    nome: 'Vinicola Lanchellotti',
-    slug: 'vinicola-lanchellotti'
-  },
-
-  {
-    id: 6,
-    nome: 'Cruz Cruzeiro do Sul',
-    slug: 'cruz-cruzeiro-do-sul'
-  }
-
 ];
 
 
