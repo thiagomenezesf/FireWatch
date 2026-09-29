@@ -29,6 +29,12 @@ public class LeituraSensor {
     @Column(nullable = false)
     private Double longitude;
 
+    @Column(nullable = false)
+    private String regiao;
+
+    @Column(nullable = false)
+    private String bioma;
+
     public LeituraSensor() {
     }
 
@@ -86,5 +92,21 @@ public class LeituraSensor {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public String getRegiao() {
+        return regiao;
+    }
+
+    public void setRegiao(String regiao) {
+        this.regiao = regiao;
+    }
+
+    public String getBioma() {
+        return bioma;
+    }
+
+    public void setBioma(String bioma) {
+        this.bioma = bioma;
     }
 }

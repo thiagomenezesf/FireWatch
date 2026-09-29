@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import * as ort from 'onnxruntime-web';
-import '../App.css';
+import '../styles/global.css';
 
 // Importação do modelo como URL para que o Vite consiga processar o ficheiro estático
-import modelUrl from '../ia/pipeline_mlp.onnx?url';
+import modelUrl from '../../../ia_service/pipeline_mlp.onnx?url';
 
 export default function Ia() {
   const [formData, setFormData] = useState({
