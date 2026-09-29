@@ -23,13 +23,13 @@ export default function Navbar() {
           <a href="#tecnologia">Construção</a>
           <a href="#prototipo">Protótipo</a>
           <a href="#testes">Testes</a>
-          <a href="#ia">Previsão de incêndios</a>
           <a href="#legislacao">Legislação</a>
           <a href="#trabalhos-relacionados">Trabalhos Relacionados</a>
+          <a href="#ia">Previsão de incêndios</a>
           <a href="#demonstracao">Demonstração</a>
         </nav>
 
-        <Link to="/monitoramentoTeste" className="nav-button">
+        <Link to="/monitoramento" className="nav-button">
           Ver demonstração
           <span>→</span>
         </Link>

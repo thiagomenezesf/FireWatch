@@ -5,186 +5,126 @@ import onnxruntime as ort
 
 
 # =========================================================
-# CONFIGURAÇÃO DO MODELO
+# Modelo ONNX
 # =========================================================
 
-PASTA_ATUAL = Path(__file__).resolve().parent
-CAMINHO_MODELO = PASTA_ATUAL / "pipeline_mlp.onnx"
+BASE_DIR = Path(__file__).resolve().parent
+MODEL_PATH = BASE_DIR / "modelo_arvore_depth17.onnx"
 
-
-# =========================================================
-# CARREGAMENTO DO MODELO
-# =========================================================
-
-if not CAMINHO_MODELO.exists():
+if not MODEL_PATH.exists():
     raise FileNotFoundError(
-        f"Modelo ONNX não encontrado em: {CAMINHO_MODELO}"
+        f"Modelo ONNX não encontrado: {MODEL_PATH}"
     )
 
-session = ort.InferenceSession(str(CAMINHO_MODELO))
+session = ort.InferenceSession(
+    str(MODEL_PATH),
+    providers=["CPUExecutionProvider"]
+)
 
-INPUT_NAME = session.get_inputs()[0].name
-OUTPUT_NAME = session.get_outputs()[0].name
-
-
-# =========================================================
-# CONVERSÃO DO BIOMA
-# =========================================================
-
-def converter_bioma(bioma: str) -> float:
-    """
-    Converte o nome do bioma para o mesmo valor utilizado
-    atualmente pelo Ia.tsx.
-
-    Mata Atlântica -> 1.0
-    outros         -> 0.0
-    """
-
-    if not bioma:
-        raise ValueError("O bioma não pode ser vazio.")
-
-    bioma_normalizado = bioma.strip().lower()
-
-    if bioma_normalizado in [
-        "mata atlântica",
-        "mata atlantica"
-    ]:
-        return 1.0
-
-    return 0.0
+input_name = session.get_inputs()[0].name
+output_name = session.get_outputs()[0].name
 
 
 # =========================================================
-# PREDIÇÃO
+# Codificação dos biomas
+# Mesma codificação utilizada durante o treinamento
+# =========================================================
+
+BIOMA_CODIGOS = {
+    "Amazônia": 0,
+    "Amazonia": 0,
+
+    "Caatinga": 1,
+
+    "Cerrado": 2,
+
+    "Mata Atlântica": 3,
+    "Mata Atlantica": 3,
+
+    "Pampa": 4,
+
+    "Pantanal": 5,
+}
+
+
+def obter_codigo_bioma(bioma: str) -> int:
+    if bioma not in BIOMA_CODIGOS:
+        raise ValueError(
+            f"Bioma inválido: '{bioma}'. "
+            f"Biomas disponíveis: {list(BIOMA_CODIGOS.keys())}"
+        )
+
+    return BIOMA_CODIGOS[bioma]
+
+
+# =========================================================
+# Predição
 # =========================================================
 
 def prever_risco(
     temperatura: float,
-    umidade: float,
     dias_sem_chuva: int,
-    pressao: float,
-    bioma: str
+    rajadas_vento_10m: float,
+    umidade: float,
+    bioma: str,
+    pressao_msl: float
 ) -> float:
-    """
-    Executa a inferência utilizando o modelo ONNX.
 
-    Ordem das features esperada pelo modelo:
+    bioma_codigo = obter_codigo_bioma(bioma)
 
-    1. temperatura
-    2. umidade
-    3. dias_sem_chuva
-    4. pressao
-    5. bioma
+    # IMPORTANTE:
+    # Esta ordem deve ser exatamente a mesma usada no treinamento:
+    #
+    # 1. temperatura
+    # 2. numero_dias_sem_chuva
+    # 3. rajadas_vento_10m
+    # 4. umidade_ar_pct
+    # 5. bioma_codigo
+    # 6. pressao_msl
 
-    Retorna:
-        risco entre 0.0 e 1.0
-    """
-
-    bioma_convertido = converter_bioma(bioma)
-
-    features = np.array(
-        [[
-            float(temperatura),
-            float(umidade),
-            float(dias_sem_chuva),
-            float(pressao),
-            bioma_convertido
-        ]],
-        dtype=np.float32
-    )
+    features = np.array([[
+        float(temperatura),
+        float(dias_sem_chuva),
+        float(rajadas_vento_10m),
+        float(umidade),
+        float(bioma_codigo),
+        float(pressao_msl)
+    ]], dtype=np.float32)
 
     resultado = session.run(
-        [OUTPUT_NAME],
-        {
-            INPUT_NAME: features
-        }
+        [output_name],
+        {input_name: features}
     )
 
-    risco = float(resultado[0].flatten()[0])
+    risco = float(
+        np.asarray(resultado[0]).flatten()[0]
+    )
 
-    print(f"[DEBUG] Saída original do modelo: {risco}")
-
-    # Mesmo comportamento utilizado no Ia.tsx
+    # Segurança para manter o risco no intervalo utilizado pelo FireWatch.
     risco = max(0.0, min(1.0, risco))
 
     return risco
 
 
 # =========================================================
-# TESTE LOCAL COM OPEN-METEO
+# Teste local
 # =========================================================
 
 if __name__ == "__main__":
 
-    # Importamos aqui apenas para o teste integrado
-    from weather_service import obter_dados_meteorologicos
-
-    print("[OK] Modelo ONNX carregado.")
-    print(f"Entrada: {INPUT_NAME}")
-    print(f"Formato: {session.get_inputs()[0].shape}")
-    print(f"Saída: {OUTPUT_NAME}")
-    print()
-
-    # =====================================================
-    # DADOS DO ARDUINO
-    # Por enquanto simulados manualmente
-    # =====================================================
-
-    sensor_id = "Arduino_01"
-
-    temperatura = 32.5
-    umidade = 45.0
-
-    latitude = -21.851073
-    longitude = -46.760875
-
-    bioma = "Mata Atlântica"
-
-    print("=== DADOS DO SENSOR ===")
-    print(f"Sensor: {sensor_id}")
-    print(f"Temperatura: {temperatura} °C")
-    print(f"Umidade: {umidade} %")
-    print(f"Latitude: {latitude}")
-    print(f"Longitude: {longitude}")
-    print(f"Bioma: {bioma}")
-    print()
-
-    # =====================================================
-    # OPEN-METEO
-    # =====================================================
-
-    print("Consultando Open-Meteo...")
-
-    dados_meteorologicos = obter_dados_meteorologicos(
-        latitude=latitude,
-        longitude=longitude
-    )
-
-    pressao = dados_meteorologicos["pressao"]
-    dias_sem_chuva = dados_meteorologicos["dias_sem_chuva"]
-
-    print()
-    print("=== DADOS METEOROLÓGICOS ===")
-    print(f"Pressão: {pressao:.1f} hPa")
-    print(
-        f"Precipitação hoje: "
-        f"{dados_meteorologicos['precipitacao_hoje']:.2f} mm"
-    )
-    print(f"Dias sem chuva: {dias_sem_chuva}")
-    print()
-
-    # =====================================================
-    # MODELO ONNX
-    # =====================================================
+    print("[OK] Modelo carregado")
+    print(f"[OK] Modelo: {MODEL_PATH.name}")
+    print(f"[OK] Input: {input_name}")
+    print(f"[OK] Output: {output_name}")
 
     risco = prever_risco(
-        temperatura=temperatura,
-        umidade=umidade,
-        dias_sem_chuva=dias_sem_chuva,
-        pressao=pressao,
-        bioma=bioma
+        temperatura=30.0,
+        dias_sem_chuva=8,
+        rajadas_vento_10m=13.3,
+        umidade=45.0,
+        bioma="Mata Atlântica",
+        pressao_msl=1012.8
     )
 
-    print("=== PREDIÇÃO DE RISCO ===")
-    print(f"Risco bruto: {risco}")
-    print(f"Risco percentual: {risco * 100:.2f}%")
+    print(f"[TESTE] Risco previsto: {risco:.6f}")
+    print(f"[TESTE] Risco previsto: {risco * 100:.2f}%")

@@ -11,11 +11,11 @@ URL_FORECAST = "https://api.open-meteo.com/v1/forecast"
 URL_HISTORICO = "https://archive-api.open-meteo.com/v1/archive"
 
 # Quantos dias anteriores serão consultados inicialmente
-DIAS_HISTORICO = 120
+DIAS_HISTORICO = 30
 
 # Por enquanto, consideramos que qualquer precipitação
 # acima de 0 mm significa que houve chuva.
-LIMITE_CHUVA_MM = 1.0
+LIMITE_CHUVA_MM = 0.0
 
 TIMEOUT_SEGUNDOS = 10
 
@@ -24,13 +24,13 @@ TIMEOUT_SEGUNDOS = 10
 # PRESSÃO ATUAL
 # =========================================================
 
-def obter_pressao_msl_atual(
+def obter_pressao_atual(
     latitude: float,
     longitude: float
 ) -> float:
     """
-    Obtém a pressão atmosférica atual ao nível médio
-    do mar (MSL) para as coordenadas informadas.
+    Obtém a pressão atmosférica atual na superfície
+    para as coordenadas informadas.
 
     Retorno:
         pressão em hPa.
@@ -39,7 +39,7 @@ def obter_pressao_msl_atual(
     params = {
         "latitude": latitude,
         "longitude": longitude,
-        "current": "pressure_msl",
+        "current": "surface_pressure",
         "timezone": "auto"
     }
 
@@ -60,64 +60,15 @@ def obter_pressao_msl_atual(
             "O Open-Meteo não retornou dados meteorológicos atuais."
         )
 
-    pressao_msl = current.get("pressure_msl")
+    pressao = current.get("surface_pressure")
 
-    if pressao_msl is None:
+    if pressao is None:
         raise ValueError(
-            "O Open-Meteo não retornou pressure_msl."
+            "O Open-Meteo não retornou surface_pressure."
         )
 
-    return float(pressao_msl)
+    return float(pressao)
 
-# =========================================================
-# RAJADAS DE VENTO ATUAL
-# =========================================================
-
-def obter_rajadas_vento_atual(
-    latitude: float,
-    longitude: float
-) -> float:
-    """
-    Obtém a rajada de vento atual a 10 metros
-    para as coordenadas informadas.
-
-    Retorno:
-        rajada de vento em km/h.
-    """
-
-    params = {
-        "latitude": latitude,
-        "longitude": longitude,
-        "current": "wind_gusts_10m",
-        "wind_speed_unit": "kmh",
-        "timezone": "auto"
-    }
-
-    response = requests.get(
-        URL_FORECAST,
-        params=params,
-        timeout=TIMEOUT_SEGUNDOS
-    )
-
-    response.raise_for_status()
-
-    dados = response.json()
-
-    current = dados.get("current")
-
-    if not current:
-        raise ValueError(
-            "O Open-Meteo não retornou dados meteorológicos atuais."
-        )
-
-    rajadas = current.get("wind_gusts_10m")
-
-    if rajadas is None:
-        raise ValueError(
-            "O Open-Meteo não retornou wind_gusts_10m."
-        )
-
-    return float(rajadas)
 
 # =========================================================
 # PRECIPITAÇÃO DE HOJE
@@ -290,7 +241,7 @@ def calcular_dias_sem_chuva(
         else:
             break
 
-    return min(dias_sem_chuva, 120)
+    return dias_sem_chuva
 
 
 # =========================================================
@@ -304,14 +255,17 @@ def obter_dados_meteorologicos(
     """
     Obtém os dados meteorológicos necessários para
     alimentar o modelo de IA do FireWatch.
+
+    Retorno:
+
+        {
+            "pressao": float,
+            "precipitacao_hoje": float,
+            "dias_sem_chuva": int
+        }
     """
 
-    pressao_msl = obter_pressao_msl_atual(
-        latitude,
-        longitude
-    )
-
-    rajadas_vento_10m = obter_rajadas_vento_atual(
+    pressao = obter_pressao_atual(
         latitude,
         longitude
     )
@@ -332,8 +286,7 @@ def obter_dados_meteorologicos(
     )
 
     return {
-        "pressao_msl": pressao_msl,
-        "rajadas_vento_10m": rajadas_vento_10m,
+        "pressao": pressao,
         "precipitacao_hoje": precipitacao_hoje,
         "dias_sem_chuva": dias_sem_chuva
     }
@@ -364,27 +317,15 @@ if __name__ == "__main__":
 
     try:
 
-        pressao_msl = obter_pressao_msl_atual(
-            latitude,
-            longitude
-        )
-
-        rajadas = obter_rajadas_vento_atual(
-            latitude,
-            longitude
-        )
-
         dados = obter_dados_meteorologicos(
             latitude,
             longitude
         )
 
-        print("DEBUG dados:", dados)
-
         print("=== DADOS METEOROLÓGICOS ===")
         print(
             f"Pressão atual: "
-            f"{dados['pressao_msl']:.1f} hPa"
+            f"{dados['pressao']:.1f} hPa"
         )
 
         print(
@@ -395,11 +336,6 @@ if __name__ == "__main__":
         print(
             f"Dias sem chuva: "
             f"{dados['dias_sem_chuva']}"
-        )
-
-        print(
-            f"Rajadas de vento 10m: "
-            f"{dados['rajadas_vento_10m']:.1f} km/h"
         )
 
     except requests.RequestException as erro:

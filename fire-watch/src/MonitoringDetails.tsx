@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import './styles/MonitoringPage.css';
+import './styles/MonitoringDetails.css';
+
 import mapaSerra from './assets/mapa-serra.png';
 import mapaMirante from './assets/mapa-mirante.jpeg';
 import mapaPedraBalao from './assets/mapa-pedra-balao.jpeg';
@@ -12,7 +14,9 @@ import mapaCruzeiro from './assets/mapa-cruzeiro-sul.jpeg';
 
 import {
   listarLeituras,
-  type LeituraSensor
+  listarPredicoes,
+  type LeituraSensor,
+  type PredicaoRisco
 } from './services/api';
 
 
@@ -25,6 +29,11 @@ interface PosicaoSensor {
   y: string;
 }
 
+interface SensorDetalhado {
+  leitura: LeituraSensor;
+  risco: number | null;
+}
+
 
 /* =========================================================
    REGIÕES
@@ -35,37 +44,32 @@ const regioes: Record<string, string> = {
   'regiao-pedra-balao': 'Região Pedra Balão',
   'pesqueiro-bambu-amarelo': 'Pesqueiro Bambu Amarelo',
   'capelinha-nossa-senhora': 'Capelinha Nossa Senhora',
-  'vinicola-lanchellotti': 'Vinicola Lanchellotti',
+  'vinicola-lancellotti': 'Vinicola Lancellotti',
   'cruz-cruzeiro-do-sul': 'Cruz Cruzeiro do Sul'
 };
+
 
 const mapasRegioes: Record<string, string> = {
   'mirante-serra-da-paulista': mapaMirante,
   'regiao-pedra-balao': mapaPedraBalao,
   'pesqueiro-bambu-amarelo': mapaBambuAmarelo,
   'capelinha-nossa-senhora': mapaCapelinha,
-  'vinicola-lanchellotti': mapaVinicola,
+  'vinicola-lancellotti': mapaVinicola,
   'cruz-cruzeiro-do-sul': mapaCruzeiro
 };
 
 
 /* =========================================================
-   POSIÇÕES VISUAIS DOS SENSORES
+   POSIÇÕES VISUAIS
 
-   Essas posições NÃO representam latitude/longitude.
-   Elas servem apenas para posicionar manualmente cada
-   sensor dentro da imagem do mapa.
-
-   Basta alterar x e y para mover os pontos.
+   IMPORTANTE:
+   os IDs abaixo seguem exatamente o padrão que está
+   chegando atualmente do banco.
 ========================================================= */
 
 const posicoesSensores: Record<string, PosicaoSensor> = {
 
-  /* =====================================================
-     MIRANTE SERRA DA PAULISTA
-     Arduino_01 até Arduino_05
-  ===================================================== */
-
+  /* MIRANTE */
   Arduino_01: { x: '22%', y: '25%' },
   Arduino_02: { x: '48%', y: '20%' },
   Arduino_03: { x: '73%', y: '32%' },
@@ -73,66 +77,141 @@ const posicoesSensores: Record<string, PosicaoSensor> = {
   Arduino_05: { x: '67%', y: '70%' },
 
 
-  /* =====================================================
-     REGIÃO PEDRA BALÃO
-     Arduino_06 até Arduino_10
-  ===================================================== */
-
+  /* PEDRA BALÃO */
   Arduino_06: { x: '27%', y: '30%' },
   Arduino_07: { x: '55%', y: '23%' },
   Arduino_08: { x: '76%', y: '48%' },
   Arduino_09: { x: '38%', y: '68%' },
-  Arduino_10: { x: '62%', y: '76%' },
+  Arduino_010: { x: '62%', y: '76%' },
 
 
-  /* =====================================================
-     PESQUEIRO BAMBU AMARELO
-     Arduino_11 até Arduino_15
-  ===================================================== */
-
-  Arduino_11: { x: '20%', y: '42%' },
-  Arduino_12: { x: '43%', y: '24%' },
-  Arduino_13: { x: '71%', y: '28%' },
-  Arduino_14: { x: '52%', y: '58%' },
-  Arduino_15: { x: '76%', y: '72%' },
+  /* BAMBU AMARELO */
+  Arduino_011: { x: '20%', y: '42%' },
+  Arduino_012: { x: '43%', y: '24%' },
+  Arduino_013: { x: '71%', y: '28%' },
+  Arduino_014: { x: '52%', y: '58%' },
+  Arduino_015: { x: '76%', y: '72%' },
 
 
-  /* =====================================================
-     CAPELINHA NOSSA SENHORA
-     Arduino_16 até Arduino_20
-  ===================================================== */
-
-  Arduino_16: { x: '25%', y: '22%' },
-  Arduino_17: { x: '62%', y: '25%' },
-  Arduino_18: { x: '78%', y: '52%' },
-  Arduino_19: { x: '30%', y: '67%' },
-  Arduino_20: { x: '57%', y: '74%' },
+  /* CAPELINHA */
+  Arduino_016: { x: '25%', y: '22%' },
+  Arduino_017: { x: '62%', y: '25%' },
+  Arduino_018: { x: '78%', y: '52%' },
+  Arduino_019: { x: '30%', y: '67%' },
+  Arduino_020: { x: '57%', y: '74%' },
 
 
-  /* =====================================================
-     VINICOLA LANCHELLOTTI
-     Arduino_21 até Arduino_25
-  ===================================================== */
-
-  Arduino_21: { x: '18%', y: '35%' },
-  Arduino_22: { x: '45%', y: '19%' },
-  Arduino_23: { x: '72%', y: '38%' },
-  Arduino_24: { x: '39%', y: '61%' },
-  Arduino_25: { x: '69%', y: '73%' },
+  /* VINÍCOLA */
+  Arduino_021: { x: '18%', y: '35%' },
+  Arduino_022: { x: '45%', y: '19%' },
+  Arduino_023: { x: '72%', y: '38%' },
+  Arduino_024: { x: '39%', y: '61%' },
+  Arduino_025: { x: '69%', y: '73%' },
 
 
-  /* =====================================================
-     CRUZ CRUZEIRO DO SUL
-     Arduino_26 até Arduino_30
-  ===================================================== */
-
-  Arduino_26: { x: '24%', y: '28%' },
-  Arduino_27: { x: '52%', y: '22%' },
-  Arduino_28: { x: '75%', y: '44%' },
-  Arduino_29: { x: '32%', y: '71%' },
-  Arduino_30: { x: '61%', y: '65%' }
+  /* CRUZEIRO DO SUL */
+  Arduino_026: { x: '24%', y: '28%' },
+  Arduino_027: { x: '52%', y: '22%' },
+  Arduino_028: { x: '75%', y: '44%' },
+  Arduino_029: { x: '32%', y: '71%' },
+  Arduino_030: { x: '61%', y: '65%' }
 
 };
+
+
+/* =========================================================
+   FUNÇÕES AUXILIARES
+========================================================= */
+
+function normalizarRisco(risco: number): number {
+  return Math.max(0, Math.min(1, risco));
+}
+
+
+function obterCorRisco(risco: number): string {
+
+  const riscoNormalizado =
+    normalizarRisco(risco);
+
+  /*
+    0%   = 120 = verde
+    50%  = 60  = amarelo
+    75%  = 30  = laranja
+    100% = 0   = vermelho
+  */
+
+  const hue =
+    120 * (1 - riscoNormalizado);
+
+  return `hsl(${hue}, 90%, 50%)`;
+}
+
+
+function obterTamanhoHalo(risco: number): number {
+
+  const riscoNormalizado =
+    normalizarRisco(risco);
+
+  return 75 + riscoNormalizado * 100;
+}
+
+
+function obterOpacidadeHalo(risco: number): number {
+
+  const riscoNormalizado =
+    normalizarRisco(risco);
+
+  return 0.28 + riscoNormalizado * 0.45;
+}
+
+
+function calcularMedia(
+  valores: number[]
+): number | null {
+
+  if (valores.length === 0) {
+    return null;
+  }
+
+  const soma = valores.reduce(
+    (total, valor) => total + valor,
+    0
+  );
+
+  return soma / valores.length;
+}
+
+
+function formatarData(
+  data?: string
+): string {
+
+  if (!data) {
+    return '--';
+  }
+
+  const dataConvertida =
+    new Date(data);
+
+  if (
+    Number.isNaN(
+      dataConvertida.getTime()
+    )
+  ) {
+    return '--';
+  }
+
+  return dataConvertida.toLocaleString(
+    'pt-BR',
+    {
+      day: '2-digit',
+      month: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    }
+  );
+}
 
 
 /* =========================================================
@@ -143,9 +222,16 @@ export default function MonitoringDetails() {
 
   const { regiao } = useParams();
 
-  const nomeRegiao = regiao ? regioes[regiao] : undefined;
+  const nomeRegiao =
+    regiao
+      ? regioes[regiao]
+      : undefined;
 
-  const mapaRegiao = regiao ? mapasRegioes[regiao] : mapaSerra;
+  const mapaRegiao =
+    regiao
+      ? mapasRegioes[regiao]
+      : mapaSerra;
+
 
   /* =======================================================
      STATES
@@ -154,124 +240,352 @@ export default function MonitoringDetails() {
   const [leiturasRegiao, setLeiturasRegiao] =
     useState<LeituraSensor[]>([]);
 
+  const [predicoes, setPredicoes] =
+    useState<PredicaoRisco[]>([]);
+
   const [carregando, setCarregando] =
     useState(true);
 
   const [erro, setErro] =
     useState<string | null>(null);
 
+  const [ultimaAtualizacao, setUltimaAtualizacao] =
+    useState<Date | null>(null);
+
 
   /* =======================================================
-     BUSCAR SENSORES DA REGIÃO
+     CARREGAR DADOS
   ======================================================= */
 
   useEffect(() => {
 
-    const carregarSensores = async () => {
+    let ativo = true;
+
+
+    const carregarDados = async () => {
 
       try {
 
-        setCarregando(true);
-        setErro(null);
-
         if (!nomeRegiao) {
-          setErro('Região não encontrada.');
+          return;
+        }
+
+        const [
+          leituras,
+          predicoesRecebidas
+        ] = await Promise.all([
+          listarLeituras(),
+          listarPredicoes()
+        ]);
+
+
+        if (!ativo) {
           return;
         }
 
 
-        /* Busca todas as leituras */
+        /* ===============================================
+           FILTRA LEITURAS DA REGIÃO
+        =============================================== */
 
-        const leituras = await listarLeituras();
-
-
-        /* Filtra apenas as leituras da região selecionada */
-
-        const leiturasDaRegiao = leituras.filter(
-          leitura =>
-            leitura.regiao === nomeRegiao
-        );
+        const leiturasDaRegiao =
+          leituras.filter(
+            leitura =>
+              leitura.regiao === nomeRegiao
+          );
 
 
-        /* =================================================
-           PEGA SOMENTE A ÚLTIMA LEITURA DE CADA SENSOR
-        ================================================= */
+        /* ===============================================
+           ÚLTIMA LEITURA DE CADA ARDUINO
+        =============================================== */
 
-        const ultimasLeiturasPorSensor = Object.values(
+        const ultimasLeituras =
+          Object.values(
 
-          leiturasDaRegiao.reduce<
-            Record<string, LeituraSensor>
-          >(
-            (sensores, leitura) => {
+            leiturasDaRegiao.reduce<
+              Record<string, LeituraSensor>
+            >(
+              (sensores, leitura) => {
 
-              const leituraAtual =
-                sensores[leitura.sensorId];
+                const atual =
+                  sensores[leitura.sensorId];
 
 
-              if (
-                !leituraAtual ||
-                new Date(
-                  leitura.dataHora ?? 0
-                ).getTime()
-                >
-                new Date(
-                  leituraAtual.dataHora ?? 0
-                ).getTime()
-              ) {
+                if (!atual) {
 
-                sensores[leitura.sensorId] =
-                  leitura;
+                  sensores[leitura.sensorId] =
+                    leitura;
 
-              }
+                  return sensores;
 
-              return sensores;
+                }
 
-            },
-            {}
-          )
 
-        );
+                const dataAtual =
+                  atual.dataHora
+                    ? new Date(
+                        atual.dataHora
+                      ).getTime()
+                    : 0;
+
+
+                const dataNova =
+                  leitura.dataHora
+                    ? new Date(
+                        leitura.dataHora
+                      ).getTime()
+                    : 0;
+
+
+                if (
+                  dataNova > dataAtual
+                ) {
+
+                  sensores[leitura.sensorId] =
+                    leitura;
+
+                }
+
+
+                return sensores;
+
+              },
+              {}
+            )
+
+          );
 
 
         setLeiturasRegiao(
-          ultimasLeiturasPorSensor
+          ultimasLeituras
         );
 
-
-        console.log(
-          `Sensores de ${nomeRegiao}:`,
-          ultimasLeiturasPorSensor
+        setPredicoes(
+          predicoesRecebidas
         );
+
+        setUltimaAtualizacao(
+          new Date()
+        );
+
+        setErro(null);
 
 
       } catch (error) {
 
         console.error(
-          'Erro ao carregar sensores da região:',
+          'Erro ao carregar monitoramento detalhado:',
           error
         );
 
-        setErro(
-          'Não foi possível carregar os sensores.'
-        );
+
+        if (ativo) {
+
+          setErro(
+            'Não foi possível atualizar os dados dos sensores.'
+          );
+
+        }
+
 
       } finally {
 
-        setCarregando(false);
+        if (ativo) {
+          setCarregando(false);
+        }
 
       }
 
     };
 
 
-    carregarSensores();
+    setCarregando(true);
+    carregarDados();
+
+
+    /*
+      Atualização automática a cada 10 segundos,
+      igual ao mapa geral.
+    */
+
+    const intervalo =
+      setInterval(
+        carregarDados,
+        10000
+      );
+
+
+    return () => {
+
+      ativo = false;
+
+      clearInterval(
+        intervalo
+      );
+
+    };
 
 
   }, [nomeRegiao]);
 
 
   /* =======================================================
-     FUNÇÃO PARA POSIÇÃO DO SENSOR
+     ÚLTIMA PREDIÇÃO DE CADA ARDUINO
+  ======================================================= */
+
+  const ultimasPredicoesPorSensor =
+    useMemo(() => {
+
+      const ultimas:
+        Record<string, PredicaoRisco> = {};
+
+
+      predicoes.forEach(
+        (predicao) => {
+
+          const atual =
+            ultimas[predicao.sensorId];
+
+
+          if (!atual) {
+
+            ultimas[predicao.sensorId] =
+              predicao;
+
+            return;
+
+          }
+
+
+          const dataAtual =
+            atual.dataHora
+              ? new Date(
+                  atual.dataHora
+                ).getTime()
+              : 0;
+
+
+          const dataNova =
+            predicao.dataHora
+              ? new Date(
+                  predicao.dataHora
+                ).getTime()
+              : 0;
+
+
+          if (
+            dataNova > dataAtual
+          ) {
+
+            ultimas[predicao.sensorId] =
+              predicao;
+
+          }
+
+        }
+      );
+
+
+      return ultimas;
+
+    }, [predicoes]);
+
+
+  /* =======================================================
+     JUNTA LEITURA + RISCO
+  ======================================================= */
+
+  const sensoresDetalhados:
+    SensorDetalhado[] =
+    useMemo(() => {
+
+      return leiturasRegiao.map(
+        (leitura) => {
+
+          const predicao =
+            ultimasPredicoesPorSensor[
+              leitura.sensorId
+            ];
+
+
+          return {
+
+            leitura,
+
+            risco:
+              predicao
+                ? predicao.risco
+                : null
+
+          };
+
+        }
+      );
+
+    }, [
+      leiturasRegiao,
+      ultimasPredicoesPorSensor
+    ]);
+
+
+  /* =======================================================
+     KPIs DA REGIÃO
+  ======================================================= */
+
+  const temperaturaMedia =
+    useMemo(() => {
+
+      return calcularMedia(
+        sensoresDetalhados.map(
+          sensor =>
+            sensor.leitura.temperatura
+        )
+      );
+
+    }, [sensoresDetalhados]);
+
+
+  const umidadeMedia =
+    useMemo(() => {
+
+      return calcularMedia(
+        sensoresDetalhados.map(
+          sensor =>
+            sensor.leitura.umidade
+        )
+      );
+
+    }, [sensoresDetalhados]);
+
+
+  const riscosDisponiveis =
+    useMemo(() => {
+
+      return sensoresDetalhados
+        .filter(
+          sensor =>
+            sensor.risco !== null
+        )
+        .map(
+          sensor =>
+            sensor.risco as number
+        );
+
+    }, [sensoresDetalhados]);
+
+
+  const riscoMedio =
+    useMemo(() => {
+
+      return calcularMedia(
+        riscosDisponiveis
+      );
+
+    }, [riscosDisponiveis]);
+
+
+  /* =======================================================
+     POSIÇÃO
   ======================================================= */
 
   const obterPosicaoSensor = (
@@ -279,38 +593,33 @@ export default function MonitoringDetails() {
     index: number
   ): PosicaoSensor => {
 
-    /*
-      Se existir uma posição configurada manualmente
-      para esse sensor, utiliza ela.
-    */
+    if (
+      posicoesSensores[sensorId]
+    ) {
 
-    if (posicoesSensores[sensorId]) {
-
-      return posicoesSensores[sensorId];
+      return (
+        posicoesSensores[sensorId]
+      );
 
     }
 
 
-    /*
-      Caso apareça um sensor novo que ainda não tenha
-      posição configurada, ele recebe uma posição
-      provisória para não desaparecer do mapa.
-    */
+    const posicoesPadrao:
+      PosicaoSensor[] = [
 
-    const posicoesPadrao: PosicaoSensor[] = [
+        { x: '25%', y: '30%' },
+        { x: '50%', y: '25%' },
+        { x: '70%', y: '40%' },
+        { x: '35%', y: '65%' },
+        { x: '65%', y: '70%' }
 
-      { x: '25%', y: '30%' },
-      { x: '50%', y: '25%' },
-      { x: '70%', y: '40%' },
-      { x: '35%', y: '65%' },
-      { x: '65%', y: '70%' }
-
-    ];
+      ];
 
 
     return (
       posicoesPadrao[
-        index % posicoesPadrao.length
+        index %
+        posicoesPadrao.length
       ]
     );
 
@@ -327,12 +636,7 @@ export default function MonitoringDetails() {
 
       <div className="dash-container">
 
-        <main
-          className="dash-main"
-          style={{
-            marginLeft: 0
-          }}
-        >
+        <main className="dash-main">
 
           <div className="dash-content">
 
@@ -342,7 +646,7 @@ export default function MonitoringDetails() {
                 Região não encontrada
               </h2>
 
-              <Link to="/monitoramentoTeste">
+              <Link to="/monitoramento">
                 ← Voltar ao monitoramento
               </Link>
 
@@ -369,7 +673,7 @@ export default function MonitoringDetails() {
 
 
       {/* ===================================================
-          MENU LATERAL
+          SIDEBAR
       =================================================== */}
 
       <aside className="dash-sidebar">
@@ -419,19 +723,11 @@ export default function MonitoringDetails() {
         </nav>
 
 
-        <div
-          style={{
-            padding: '24px'
-          }}
-        >
+        <div className="details-sidebar-footer">
 
           <Link
-            to="/monitoramentoTeste"
-            style={{
-              color: '#a1a1aa',
-              fontSize: '12px',
-              textDecoration: 'none'
-            }}
+            to="/monitoramento"
+            className="details-back-link"
           >
             ← Voltar ao mapa geral
           </Link>
@@ -442,7 +738,7 @@ export default function MonitoringDetails() {
 
 
       {/* ===================================================
-          CONTEÚDO PRINCIPAL
+          PRINCIPAL
       =================================================== */}
 
       <main className="dash-main">
@@ -460,41 +756,19 @@ export default function MonitoringDetails() {
               {nomeRegiao}
             </strong>
 
-            <div
-              style={{
-                fontSize: '11px',
-                color: '#a1a1aa',
-                marginTop: '3px'
-              }}
-            >
+            <div className="details-header-subtitle">
               Monitoramento detalhado da região
             </div>
 
           </div>
 
 
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              fontSize: '12px',
-              color: '#a1a1aa'
-            }}
-          >
+          <div className="details-header-status">
 
-            <div
-              style={{
-                width: '8px',
-                height: '8px',
-                borderRadius: '50%',
-                backgroundColor: '#10b981'
-              }}
-            />
+            <span className="details-online-dot" />
 
-            Sensores conectados:
-            {' '}
-            {leiturasRegiao.length}
+            {sensoresDetalhados.length}/5 sensores
+            com dados
 
           </div>
 
@@ -508,54 +782,167 @@ export default function MonitoringDetails() {
         <div className="dash-content">
 
 
+          {erro && (
+
+            <div className="details-error">
+              {erro}
+            </div>
+
+          )}
+
+
           {/* =================================================
-              CABEÇALHO DA REGIÃO
+              TÍTULO
           ================================================= */}
 
-          <div
-            className="dash-panel"
-            style={{
-              marginBottom: '20px'
-            }}
-          >
+          <div className="dash-panel details-title-panel">
 
-            <div className="dash-panel-header">
+            <div className="dash-panel-header details-title-header">
 
               <div>
 
-                <h2
-                  style={{
-                    margin: 0
-                  }}
-                >
+                <h2>
                   {nomeRegiao}
                 </h2>
 
-                <span
-                  style={{
-                    fontSize: '12px',
-                    color: '#a1a1aa'
-                  }}
-                >
-                  Visualização detalhada dos sensores ambientais
+                <span className="details-subtitle">
+                  Visualização individual dos sensores e
+                  do risco predito pela IA
                 </span>
 
               </div>
 
 
-              <Link
-                to="/monitoramento"
-                style={{
-                  textDecoration: 'none',
-                  color: '#f97316',
-                  fontSize: '12px',
-                  fontWeight: '600'
-                }}
-              >
-                ← Voltar ao mapa geral
-              </Link>
+              <div className="details-title-actions">
+
+                {ultimaAtualizacao && (
+
+                  <span className="details-update-time">
+                    Atualizado às{' '}
+                    {ultimaAtualizacao.toLocaleTimeString(
+                      'pt-BR'
+                    )}
+                  </span>
+
+                )}
+
+
+                <Link
+                  to="/monitoramento"
+                  className="details-return-button"
+                >
+                  ← Mapa geral
+                </Link>
+
+              </div>
 
             </div>
+
+          </div>
+
+
+          {/* =================================================
+              KPIs
+          ================================================= */}
+
+          <div className="details-kpi-grid">
+
+
+            <div className="details-kpi-card">
+
+              <span className="details-kpi-title">
+                Temperatura Média
+              </span>
+
+              <strong className="details-kpi-value">
+
+                {temperaturaMedia !== null
+                  ? `${temperaturaMedia.toFixed(1)}°C`
+                  : '--'}
+
+              </strong>
+
+              <span className="details-kpi-description">
+                Média dos sensores da região
+              </span>
+
+            </div>
+
+
+            <div className="details-kpi-card">
+
+              <span className="details-kpi-title">
+                Umidade Média
+              </span>
+
+              <strong className="details-kpi-value">
+
+                {umidadeMedia !== null
+                  ? `${umidadeMedia.toFixed(1)}%`
+                  : '--'}
+
+              </strong>
+
+              <span className="details-kpi-description">
+                Média das últimas leituras
+              </span>
+
+            </div>
+
+
+            <div className="details-kpi-card">
+
+              <span className="details-kpi-title">
+                Risco Médio
+              </span>
+
+              <strong
+                className="details-kpi-value"
+                style={{
+                  color:
+                    riscoMedio !== null
+                      ? obterCorRisco(
+                          riscoMedio
+                        )
+                      : '#a1a1aa'
+                }}
+              >
+
+                {riscoMedio !== null
+                  ? `${(
+                      normalizarRisco(
+                        riscoMedio
+                      ) * 100
+                    ).toFixed(1)}%`
+                  : '--'}
+
+              </strong>
+
+              <span className="details-kpi-description">
+                Média das predições individuais
+              </span>
+
+            </div>
+
+
+            <div className="details-kpi-card">
+
+              <span className="details-kpi-title">
+                Sensores com Dados
+              </span>
+
+              <strong className="details-kpi-value">
+
+                {sensoresDetalhados.length}/5
+
+              </strong>
+
+              <span className="details-kpi-description">
+                Últimas leituras disponíveis
+              </span>
+
+            </div>
+
 
           </div>
 
@@ -568,13 +955,9 @@ export default function MonitoringDetails() {
 
             <div className="dash-panel">
 
-              <p
-                style={{
-                  color: '#a1a1aa'
-                }}
-              >
-                Carregando sensores...
-              </p>
+              <div className="details-loading">
+                Carregando dados dos sensores...
+              </div>
 
             </div>
 
@@ -582,57 +965,267 @@ export default function MonitoringDetails() {
 
 
           {/* =================================================
-              ERRO
-          ================================================= */}
-
-          {erro && (
-
-            <div className="dash-panel">
-
-              <p
-                style={{
-                  color: '#ef4444'
-                }}
-              >
-                {erro}
-              </p>
-
-            </div>
-
-          )}
-
-
-          {/* =================================================
-              MAPA
+              MAPA + SCOUTS
           ================================================= */}
 
           {!carregando && !erro && (
 
-            <div className="dash-panel">
+            <div className="details-main-grid">
 
 
-              <div className="dash-panel-header">
+              {/* =============================================
+                  MAPA
+              ============================================= */}
 
-                <div>
+              <div className="dash-panel details-map-panel">
 
-                  <h3
-                    style={{
-                      marginBottom: '4px'
-                    }}
-                  >
-                    Sensores da região
-                  </h3>
+                <div className="dash-panel-header">
 
-                  <span
-                    style={{
-                      fontSize: '12px',
-                      color: '#a1a1aa'
-                    }}
-                  >
-                    {leiturasRegiao.length}
-                    {' '}
-                    sensor(es) identificado(s)
-                  </span>
+                  <div>
+
+                    <h3>
+                      Mapa de Risco por Sensor
+                    </h3>
+
+                    <span className="details-subtitle">
+                      Cada halo representa a predição
+                      individual do Arduino
+                    </span>
+
+                  </div>
+
+
+                  <div className="details-live">
+
+                    <span />
+
+                    Tempo real
+
+                  </div>
+
+                </div>
+
+
+                <div
+                  className="details-map-canvas"
+                  style={{
+                    backgroundImage:
+                      `linear-gradient(
+                        rgba(9, 9, 11, 0.50),
+                        rgba(9, 9, 11, 0.50)
+                      ),
+                      url(${mapaRegiao})`
+                  }}
+                >
+
+
+                  {/* =========================================
+                      SENSORES
+                  ========================================= */}
+
+                  {sensoresDetalhados.map(
+                    (sensor, index) => {
+
+                      const leitura =
+                        sensor.leitura;
+
+                      const posicao =
+                        obterPosicaoSensor(
+                          leitura.sensorId,
+                          index
+                        );
+
+
+                      const possuiRisco =
+                        sensor.risco !== null;
+
+
+                      const risco =
+                        normalizarRisco(
+                          sensor.risco ?? 0
+                        );
+
+
+                      const cor =
+                        obterCorRisco(
+                          risco
+                        );
+
+
+                      const tamanhoHalo =
+                        obterTamanhoHalo(
+                          risco
+                        );
+
+
+                      const opacidade =
+                        obterOpacidadeHalo(
+                          risco
+                        );
+
+
+                      return (
+
+                        <div
+                          key={leitura.sensorId}
+                          className="details-sensor-marker"
+                          style={{
+                            left: posicao.x,
+                            top: posicao.y
+                          }}
+                        >
+
+
+                          {/* HALO */}
+
+                          {possuiRisco && (
+
+                            <div
+                              className="details-sensor-heat"
+                              style={{
+                                width:
+                                  `${tamanhoHalo}px`,
+
+                                height:
+                                  `${tamanhoHalo}px`,
+
+                                opacity:
+                                  opacidade,
+
+                                background:
+                                  `radial-gradient(
+                                    circle,
+                                    ${cor} 0%,
+                                    ${cor} 18%,
+                                    transparent 72%
+                                  )`
+                              }}
+                            />
+
+                          )}
+
+
+                          {/* PONTO */}
+
+                          <div
+                            className="details-sensor-dot"
+                            style={{
+                              backgroundColor:
+                                possuiRisco
+                                  ? cor
+                                  : '#71717a',
+
+                              boxShadow:
+                                possuiRisco
+                                  ? `0 0 16px ${cor}`
+                                  : '0 0 8px #71717a'
+                            }}
+                          />
+
+
+                          {/* CARD */}
+
+                          <div className="details-sensor-popup">
+
+                            <div className="details-popup-header">
+
+                              <strong>
+                                {leitura.sensorId}
+                              </strong>
+
+                              <span
+                                style={{
+                                  color:
+                                    possuiRisco
+                                      ? cor
+                                      : '#a1a1aa'
+                                }}
+                              >
+
+                                {possuiRisco
+                                  ? `${(
+                                      risco * 100
+                                    ).toFixed(1)}%`
+                                  : '--'}
+
+                              </span>
+
+                            </div>
+
+
+                            <div className="details-popup-metrics">
+
+                              <span>
+                                🌡️ {leitura.temperatura.toFixed(1)}°C
+                              </span>
+
+                              <span>
+                                💧 {leitura.umidade.toFixed(1)}%
+                              </span>
+
+                            </div>
+
+
+                            <div className="details-popup-time">
+
+                              {formatarData(
+                                leitura.dataHora
+                              )}
+
+                            </div>
+
+                          </div>
+
+                        </div>
+
+                      );
+
+                    }
+                  )}
+
+
+                  {/* SEM SENSOR */}
+
+                  {sensoresDetalhados.length === 0 && (
+
+                    <div className="details-no-sensors">
+                      Nenhum sensor encontrado nesta região.
+                    </div>
+
+                  )}
+
+
+                  {/* LEGENDA */}
+
+                  <div className="details-map-legend">
+
+                    <strong>
+                      Risco de incêndio
+                    </strong>
+
+                    <div className="details-risk-gradient" />
+
+                    <div className="details-risk-scale">
+
+                      <span>0%</span>
+                      <span>25%</span>
+                      <span>50%</span>
+                      <span>75%</span>
+                      <span>100%</span>
+
+                    </div>
+
+
+                    <div className="details-risk-text">
+
+                      <span>Baixo</span>
+                      <span>Moderado</span>
+                      <span>Crítico</span>
+
+                    </div>
+
+                  </div>
+
 
                 </div>
 
@@ -640,334 +1233,173 @@ export default function MonitoringDetails() {
 
 
               {/* =============================================
-                  MAPA AMPLIADO
+                  SCOUTS / RESUMO
               ============================================= */}
 
-              <div
-                className="map-canvas"
-                style={{
+              <div className="dash-panel details-scout-panel">
 
-                  backgroundImage:
-                    `linear-gradient(
-                      rgba(9, 9, 11, 0.55),
-                      rgba(9, 9, 11, 0.55)
-                    ),
-                    url(${mapaRegiao})`,
+                <div className="dash-panel-header">
 
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
+                  <div>
 
-                  aspectRatio: '16 / 9',
+                    <h3>
+                      Sensores
+                    </h3>
 
-                  position: 'relative',
-                  overflow: 'hidden'
+                    <span className="details-subtitle">
+                      Último estado registrado
+                    </span>
 
-                }}
-              >
-
-
-                {/* ===========================================
-                    SENSORES
-                =========================================== */}
-
-                {leiturasRegiao.map(
-                  (sensor, index) => {
-
-                    const posicao =
-                      obterPosicaoSensor(
-                        sensor.sensorId,
-                        index
-                      );
-
-
-                    return (
-
-                      <div
-                        key={sensor.sensorId}
-                        style={{
-                          position: 'absolute',
-
-                          left: posicao.x,
-                          top: posicao.y,
-
-                          transform:
-                            'translate(-50%, -50%)',
-
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-
-                          zIndex: 10
-                        }}
-                      >
-
-
-                        {/* ===================================
-                            HALO / HEATMAP
-                        =================================== */}
-
-                        <div
-                          style={{
-
-                            position: 'absolute',
-
-                            width: '110px',
-                            height: '110px',
-
-                            left: '50%',
-                            top: '6px',
-
-                            transform:
-                              'translate(-50%, -50%)',
-
-                            borderRadius: '50%',
-
-                            background:
-                              `radial-gradient(
-                                circle,
-                                rgba(249,115,22,0.45) 0%,
-                                rgba(249,115,22,0.20) 40%,
-                                transparent 72%
-                              )`,
-
-                            pointerEvents: 'none',
-
-                            zIndex: 0
-
-                          }}
-                        />
-
-
-                        {/* ===================================
-                            BOLINHA DO SENSOR
-                        =================================== */}
-
-                        <div
-                          style={{
-
-                            width: '13px',
-                            height: '13px',
-
-                            borderRadius: '50%',
-
-                            backgroundColor:
-                              '#f97316',
-
-                            boxShadow:
-                              '0 0 15px #f97316',
-
-                            zIndex: 2
-
-                          }}
-                        />
-
-
-                        {/* ===================================
-                            CARD DO SENSOR
-                        =================================== */}
-
-                        <div
-                          style={{
-
-                            marginTop: '7px',
-
-                            backgroundColor:
-                              'rgba(9,9,11,0.92)',
-
-                            border:
-                              '1px solid #3f3f46',
-
-                            padding:
-                              '8px 10px',
-
-                            borderRadius:
-                              '6px',
-
-                            fontSize:
-                              '10px',
-
-                            color:
-                              '#f4f4f5',
-
-                            whiteSpace:
-                              'nowrap',
-
-                            zIndex: 3,
-
-                            boxShadow:
-                              '0 4px 15px rgba(0,0,0,0.35)'
-
-                          }}
-                        >
-
-
-                          <div
-                            style={{
-                              fontWeight: '700',
-                              marginBottom: '4px',
-                              color: '#ffffff'
-                            }}
-                          >
-
-                            {sensor.sensorId}
-
-                          </div>
-
-
-                          <div>
-
-                            🌡️
-                            {' '}
-                            {sensor.temperatura}°C
-
-                            {' | '}
-
-                            💧
-                            {' '}
-                            {sensor.umidade}%
-
-                          </div>
-
-
-                          <div
-                            style={{
-                              marginTop: '4px',
-                              color: '#a1a1aa'
-                            }}
-                          >
-
-                            Lat:
-                            {' '}
-                            {sensor.latitude}
-
-                          </div>
-
-
-                          <div
-                            style={{
-                              color: '#a1a1aa'
-                            }}
-                          >
-
-                            Long:
-                            {' '}
-                            {sensor.longitude}
-
-                          </div>
-
-
-                        </div>
-
-
-                      </div>
-
-                    );
-
-                  }
-                )}
-
-
-                {/* ===========================================
-                    SEM SENSORES
-                =========================================== */}
-
-                {leiturasRegiao.length === 0 && (
-
-                  <div
-                    style={{
-
-                      position: 'absolute',
-
-                      left: '50%',
-                      top: '50%',
-
-                      transform:
-                        'translate(-50%, -50%)',
-
-                      backgroundColor:
-                        'rgba(9,9,11,0.9)',
-
-                      border:
-                        '1px solid #27272a',
-
-                      borderRadius:
-                        '8px',
-
-                      padding:
-                        '16px 24px',
-
-                      color:
-                        '#a1a1aa',
-
-                      fontSize:
-                        '13px'
-
-                    }}
-                  >
-
-                    Nenhum sensor encontrado nesta região.
-
-                  </div>
-
-                )}
-
-
-                {/* ===========================================
-                    LEGENDA
-                =========================================== */}
-
-                <div
-                  style={{
-
-                    position: 'absolute',
-
-                    bottom: '12px',
-                    right: '12px',
-
-                    backgroundColor:
-                      'rgba(9,9,11,0.88)',
-
-                    border:
-                      '1px solid #27272a',
-
-                    padding:
-                      '8px 12px',
-
-                    borderRadius:
-                      '6px',
-
-                    fontSize:
-                      '10px',
-
-                    color:
-                      '#a1a1aa',
-
-                    backdropFilter:
-                      'blur(4px)',
-
-                    zIndex: 20
-
-                  }}
-                >
-
-                  <strong
-                    style={{
-                      color: '#f4f4f5'
-                    }}
-                  >
-                    Sensores ambientais
-                  </strong>
-
-                  <div
-                    style={{
-                      marginTop: '4px'
-                    }}
-                  >
-                    Última leitura recebida de cada sensor
                   </div>
 
                 </div>
 
+
+                <div className="details-sensor-list">
+
+                  {sensoresDetalhados.map(
+                    (sensor) => {
+
+                      const leitura =
+                        sensor.leitura;
+
+                      const possuiRisco =
+                        sensor.risco !== null;
+
+                      const risco =
+                        normalizarRisco(
+                          sensor.risco ?? 0
+                        );
+
+                      const cor =
+                        obterCorRisco(
+                          risco
+                        );
+
+
+                      return (
+
+                        <div
+                          key={leitura.sensorId}
+                          className="details-scout-card"
+                        >
+
+                          <div className="details-scout-header">
+
+                            <div>
+
+                              <span
+                                className="details-scout-dot"
+                                style={{
+                                  backgroundColor:
+                                    possuiRisco
+                                      ? cor
+                                      : '#71717a',
+
+                                  boxShadow:
+                                    possuiRisco
+                                      ? `0 0 8px ${cor}`
+                                      : 'none'
+                                }}
+                              />
+
+                              <strong>
+                                {leitura.sensorId}
+                              </strong>
+
+                            </div>
+
+
+                            <strong
+                              className="details-scout-risk"
+                              style={{
+                                color:
+                                  possuiRisco
+                                    ? cor
+                                    : '#a1a1aa'
+                              }}
+                            >
+
+                              {possuiRisco
+                                ? `${(
+                                    risco * 100
+                                  ).toFixed(1)}%`
+                                : '--'}
+
+                            </strong>
+
+                          </div>
+
+
+                          <div className="details-scout-metrics">
+
+                            <div>
+
+                              <span>
+                                Temperatura
+                              </span>
+
+                              <strong>
+                                {leitura.temperatura.toFixed(1)}°C
+                              </strong>
+
+                            </div>
+
+
+                            <div>
+
+                              <span>
+                                Umidade
+                              </span>
+
+                              <strong>
+                                {leitura.umidade.toFixed(1)}%
+                              </strong>
+
+                            </div>
+
+                          </div>
+
+
+                          <div className="details-scout-location">
+
+                            <span>
+                              Lat. {leitura.latitude.toFixed(6)}
+                            </span>
+
+                            <span>
+                              Long. {leitura.longitude.toFixed(6)}
+                            </span>
+
+                          </div>
+
+
+                          <div className="details-scout-date">
+
+                            Última leitura:{' '}
+                            {formatarData(
+                              leitura.dataHora
+                            )}
+
+                          </div>
+
+                        </div>
+
+                      );
+
+                    }
+                  )}
+
+
+                  {sensoresDetalhados.length === 0 && (
+
+                    <div className="details-empty-list">
+                      Nenhum sensor disponível.
+                    </div>
+
+                  )}
+
+                </div>
 
               </div>
 

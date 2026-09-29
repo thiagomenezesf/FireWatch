@@ -3,10 +3,41 @@
 #define DHTPIN A1
 #define DHTTYPE DHT22
 
-const char* arduinoId = arduino-01;
+const float listaLatitudes[30] = {
+  // Mirante Serra da Paulista (Arduino_01 a 05)
+  -21.851073, -21.850535, -21.852248, -21.856550, -21.857844,
+  // Região Pedra Balão (Arduino_06 a 10)
+  -21.937159, -21.936732, -21.938107, -21.939366, -21.939754,
+  // Pesqueiro Bambu Amarelo (Arduino_11 a 15)
+  -21.896328, -21.895233, -21.895449, -21.897074, -21.897801,
+  // Capelinha Nossa Senhora (Arduino_16 a 20)
+  -21.908078, -21.908506, -21.909949, -21.910994, -21.911522,
+  // Vinicola Lancellotti (Arduino_21 a 25)
+  -21.862210, -21.860617, -21.862957, -21.865068, -21.865994,
+  // Cruz Cruzeiro do Sul (Arduino_26 a 30)
+  -21.892898, -21.891206, -21.892729, -21.896054, -21.895517
+};
 
-const float latitude = -21.123123213;
-const float longitude = -46.89798798;
+const float listaLongitudes[30] = {
+  // Mirante Serra da Paulista (Arduino_01 a 05)
+  -46.760875, -46.753558, -46.746670, -46.757120, -46.748086,
+  // Região Pedra Balão (Arduino_06 a 10)
+  -46.768087, -46.765024, -46.762602, -46.766902, -46.764166,
+  // Pesqueiro Bambu Amarelo (Arduino_11 a 15)
+  -46.829812, -46.827463, -46.824569, -46.826613, -46.824193,
+  // Capelinha Nossa Senhora (Arduino_16 a 20)
+  -46.807316, -46.802885, -46.800785, -46.806595, -46.803325,
+  // Vinicola Lanchellotti (Arduino_21 a 25)
+  -46.802958, -46.797486, -46.792486, -46.798838, -46.793098,
+  // Cruz Cruzeiro do Sul (Arduino_26 a 30)
+  -46.748485, -46.740782, -46.733594, -46.745396, -46.738111
+};
+
+// Declaração das variáveis que faltavam no código original
+float latitude = 0.0000;
+float longitude = 0.0000;
+String regiao = "";
+String bioma = "";
 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -14,26 +45,37 @@ void setup() {
   Serial.begin(9600);
   dht.begin();
 
-  delay(2000);
+  while (!Serial) {
+    ; // Espera a conexão ser estabelecida
+  }
+
+  delay(1000); 
+  
+  // Inicializa o gerador de números aleatórios com uma leitura analógica flutuante
+  randomSeed(analogRead(0)); 
 }
 
 void loop() {
   float temperatura = dht.readTemperature();
   float umidade = dht.readHumidity();
 
-  if (isnan(temperatura) || isnan(umidade)) {
-    Serial.println("ERRO");
-  } else {
-    Serial.println(arduino);
-    Serial.println(",");
-    Serial.print(temperatura);
+  if (isnan(temperatura) || isnan(umidade)) { 
+    Serial.println("ERRO"); 
+  } else { 
+    // Corrigido para Serial.print para manter tudo na mesma linha (conforme o padrão CSV)
+    Serial.print(arduino); 
+    Serial.print(","); 
+    Serial.print(temperatura); 
+    Serial.print(","); 
+    Serial.print(umidade); 
+    Serial.print(","); 
+    Serial.print(latitude, 6); 
+    Serial.print(","); 
+    Serial.print(longitude, 6); // println no final para pular a linha para o próximo envio
     Serial.print(",");
-    Serial.print(umidade);
+    Serial.print(regiao);
     Serial.print(",");
-    Serial.print(latitude, 6);
-    Serial.print(",");
-    Serial.println(longitude, 6);
-  }
-
-  delay(10000);
+    Serial.println(bioma);
+  } 
+  delay(7000); 
 }

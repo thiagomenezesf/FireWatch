@@ -43,7 +43,9 @@ def gerar_predicao(
     longitude,
     bioma
 ):
+
     try:
+
         print(
             f"[IA] Gerando predição para "
             f"{sensor_id}..."
@@ -58,26 +60,17 @@ def gerar_predicao(
             longitude=longitude
         )
 
-        pressao_msl = dados_meteorologicos[
-            "pressao_msl"
-        ]
-
-        rajadas_vento_10m = dados_meteorologicos[
-            "rajadas_vento_10m"
-        ]
-
+        pressao = dados_meteorologicos["pressao"]
         dias_sem_chuva = dados_meteorologicos[
             "dias_sem_chuva"
         ]
-
         precipitacao_hoje = dados_meteorologicos[
             "precipitacao_hoje"
         ]
 
         print(
             f"[CLIMA] "
-            f"Pressão MSL: {pressao_msl:.1f} hPa | "
-            f"Rajadas: {rajadas_vento_10m:.1f} km/h | "
+            f"Pressão: {pressao:.1f} hPa | "
             f"Dias sem chuva: {dias_sem_chuva} | "
             f"Chuva hoje: {precipitacao_hoje:.2f} mm"
         )
@@ -88,11 +81,10 @@ def gerar_predicao(
 
         risco = prever_risco(
             temperatura=temperatura,
-            dias_sem_chuva=dias_sem_chuva,
-            rajadas_vento_10m=rajadas_vento_10m,
             umidade=umidade,
-            bioma=bioma,
-            pressao_msl=pressao_msl
+            dias_sem_chuva=dias_sem_chuva,
+            pressao=pressao,
+            bioma=bioma
         )
 
         print(
@@ -117,6 +109,7 @@ def gerar_predicao(
         )
 
         if resposta.status_code == 201:
+
             print(
                 f"[PREDIÇÃO SALVA] "
                 f"Sensor: {sensor_id} | "
@@ -125,6 +118,7 @@ def gerar_predicao(
             )
 
         else:
+
             print(
                 f"[ERRO PREDIÇÃO] "
                 f"Status {resposta.status_code} | "
@@ -132,12 +126,14 @@ def gerar_predicao(
             )
 
     except requests.exceptions.RequestException as erro:
+
         print(
             f"[ERRO PREDIÇÃO] "
             f"Falha de comunicação: {erro}"
         )
 
     except Exception as erro:
+
         print(
             f"[ERRO PREDIÇÃO] "
             f"Não foi possível gerar a predição: {erro}"

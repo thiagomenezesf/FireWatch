@@ -8,6 +8,8 @@ import Impact from "./components/Impact";
 import Footer from "./components/Footer";
 import Legislation from "./components/Legislation";
 import CorrelatedWorks from "./components/CorrelatedWorks";
+import Test from "./components/Test";
+import Ia from "./components/Ia";
 
 export default function HomePage() {
   return (
@@ -20,9 +22,11 @@ export default function HomePage() {
         <Impact />
         <Solution />
         <Technologies />
+        <Test/>
         <DemoPreview />
         <Legislation/>
         <CorrelatedWorks />
+        <Ia/>
       </main>
 
       <Footer />
