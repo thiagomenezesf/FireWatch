@@ -23,7 +23,6 @@ export default function HomePage() {
         <Impact />
         <Solution />
         <Technologies />
-        <Test/>
         <DemoPreview />
         <Test />
         <Ia />
