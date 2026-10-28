@@ -9,7 +9,7 @@ import onnxruntime as ort
 # =========================================================
 
 BASE_DIR = Path(__file__).resolve().parent
-MODEL_PATH = BASE_DIR / "modelo_arvore_depth17.onnx"
+MODEL_PATH = BASE_DIR / "modelo_arvore_novo.onnx"
 
 if not MODEL_PATH.exists():
     raise FileNotFoundError(
@@ -26,51 +26,17 @@ output_name = session.get_outputs()[0].name
 
 
 # =========================================================
-# Codificação dos biomas
-# Mesma codificação utilizada durante o treinamento
-# =========================================================
-
-BIOMA_CODIGOS = {
-    "Amazônia": 0,
-    "Amazonia": 0,
-
-    "Caatinga": 1,
-
-    "Cerrado": 2,
-
-    "Mata Atlântica": 3,
-    "Mata Atlantica": 3,
-
-    "Pampa": 4,
-
-    "Pantanal": 5,
-}
-
-
-def obter_codigo_bioma(bioma: str) -> int:
-    if bioma not in BIOMA_CODIGOS:
-        raise ValueError(
-            f"Bioma inválido: '{bioma}'. "
-            f"Biomas disponíveis: {list(BIOMA_CODIGOS.keys())}"
-        )
-
-    return BIOMA_CODIGOS[bioma]
-
-
-# =========================================================
 # Predição
 # =========================================================
 
 def prever_risco(
     temperatura: float,
-    dias_sem_chuva: int,
-    rajadas_vento_10m: float,
     umidade: float,
-    bioma: str,
+    dias_sem_chuva: int,
     pressao_msl: float
 ) -> float:
 
-    bioma_codigo = obter_codigo_bioma(bioma)
+   
 
     # IMPORTANTE:
     # Esta ordem deve ser exatamente a mesma usada no treinamento:
@@ -84,10 +50,8 @@ def prever_risco(
 
     features = np.array([[
         float(temperatura),
-        float(dias_sem_chuva),
-        float(rajadas_vento_10m),
         float(umidade),
-        float(bioma_codigo),
+        float(dias_sem_chuva),
         float(pressao_msl)
     ]], dtype=np.float32)
 
@@ -118,11 +82,9 @@ if __name__ == "__main__":
     print(f"[OK] Output: {output_name}")
 
     risco = prever_risco(
-        temperatura=30.0,
-        dias_sem_chuva=8,
-        rajadas_vento_10m=13.3,
-        umidade=45.0,
-        bioma="Mata Atlântica",
+        temperatura=22.0,
+        umidade=59.0,
+        dias_sem_chuva=1,
         pressao_msl=1012.8
     )
 

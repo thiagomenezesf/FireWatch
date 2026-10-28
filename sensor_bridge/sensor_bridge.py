@@ -88,10 +88,8 @@ def gerar_predicao(
 
         risco = prever_risco(
             temperatura=temperatura,
-            dias_sem_chuva=dias_sem_chuva,
-            rajadas_vento_10m=rajadas_vento_10m,
             umidade=umidade,
-            bioma=bioma,
+            dias_sem_chuva=dias_sem_chuva,
             pressao_msl=pressao_msl
         )
 
