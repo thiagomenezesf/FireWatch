@@ -9,7 +9,7 @@ import onnxruntime as ort
 # =========================================================
 
 BASE_DIR = Path(__file__).resolve().parent
-MODEL_PATH = BASE_DIR / "modelo_arvore_novo.onnx"
+MODEL_PATH = BASE_DIR / "modelo_arvore_ofc.onnx"
 
 if not MODEL_PATH.exists():
     raise FileNotFoundError(
