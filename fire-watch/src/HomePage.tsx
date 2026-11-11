@@ -10,6 +10,7 @@ import Legislation from "./components/Legislation";
 import CorrelatedWorks from "./components/CorrelatedWorks";
 import Test from "./components/Test";
 import Ia from "./components/Ia";
+import VideoDemo from "./components/VideoDemo";
 
 export default function HomePage() {
   return (
@@ -23,10 +24,11 @@ export default function HomePage() {
         <Solution />
         <Technologies />
         <DemoPreview />
+        <VideoDemo />
         <Test />
+        <Ia />
         <Legislation/>
         <CorrelatedWorks />
-        <Ia />
       </main>
 
       <Footer />
