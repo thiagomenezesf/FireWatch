@@ -762,6 +762,10 @@ export default function MonitoringDetails() {
 
           </div>
 
+          <div>
+            <p style={{ fontSize: '14px', color: '#a1a1aa' }}>Aguarde alguns segundos para ver a simulação</p>
+          </div>
+
 
           <div className="details-header-status">
 
@@ -923,7 +927,6 @@ export default function MonitoringDetails() {
               </span>
 
             </div>
-
 
             <div className="details-kpi-card">
 
