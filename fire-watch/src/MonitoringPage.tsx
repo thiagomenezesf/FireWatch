@@ -317,7 +317,7 @@ export default function MonitoringPage() {
     // Atualiza automaticamente.
     const intervalo = setInterval(
       carregarDados,
-      10000
+      5000
     );
 
     return () => {
@@ -556,6 +556,9 @@ export default function MonitoringPage() {
 
           </div>
 
+          <div>
+            <p style={{ fontSize: '14px', color: '#a1a1aa' }}>Aguarde alguns segundos para ver a simulação</p>
+          </div>
 
           <div className="system-status">
 

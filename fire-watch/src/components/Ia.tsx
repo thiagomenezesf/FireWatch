@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import * as ort from 'onnxruntime-web';
 import '../styles/global.css';
+import Tree from "../assets/tree.png";
 
 // Importação do modelo como URL para que o Vite consiga processar o ficheiro estático
-import modelUrl from '../../../ia_service/pipeline_mlp.onnx?url';
+import modelUrl from '../../../ia_service/modelo_arvore_ofc.onnx?url';
 
 export default function Ia() {
   const [formData, setFormData] = useState({
@@ -11,7 +12,6 @@ export default function Ia() {
     umidade: '',
     dias_sem_chuva: '',
     pressao: '',
-    bioma: 'Mata Atlântica'
   });
   
   const [resultado, setResultado] = useState<number | string | null>(null);
@@ -30,8 +30,7 @@ export default function Ia() {
       parseFloat(data.temperatura),
       parseFloat(data.umidade),
       parseInt(data.dias_sem_chuva, 10),
-      parseFloat(data.pressao),
-      data.bioma === 'Mata Atlântica' ? 1.0 : 0.0 
+      parseFloat(data.pressao)
     ];
   };
 
@@ -81,7 +80,7 @@ export default function Ia() {
           <h2>
             Previsão de Risco de Fogo
             <br />
-            <span>Rede Neural MLP</span>
+            <span>Árvore de Decisão Regressiva</span>
           </h2>
         </div>
 
@@ -116,16 +115,6 @@ export default function Ia() {
               </div>
             </div>
 
-            <div className="ia-form-group ia-full-width">
-              <label htmlFor="bioma">Bioma da Região</label>
-              <div className="ia-input-wrapper">
-                <select id="bioma" name="bioma" value={formData.bioma} onChange={handleChange} required>
-                  <option value="Mata Atlântica">Mata Atlântica</option>
-                  <option value="Cerrado">Cerrado</option>
-                </select>
-              </div>
-            </div>
-
             <button type="submit" className={`ia-submit-btn ${isLoading ? 'loading' : ''}`} disabled={isLoading}>
               {isLoading ? 'Processando Modelo...' : 'Prever Risco de Fogo'}
             </button>
@@ -152,6 +141,23 @@ export default function Ia() {
               )}
             </div>
           )}
+
+          <div className="section-heading-ia centered" style={{ marginTop: '2rem', marginBottom: '1rem', color: '#a1a1aa', minWidth: '600px' }}>
+            <p>
+              Para o desenvolvimento da nossa IA, utilizamos uma base de dados do Kaggle (saviovianna/queimadas-inpe), que cruza informações do BDQueimadas (INPE) com a API de meteorologia da Open-Meteo. Nossa variável-alvo é o "risco de fogo" , um cálculo determinístico disponibilizado pelo próprio INPE.
+              <br/><br/>O objetivo principal é criar um surrogate model (modelo substituto) capaz de aproximar esse cálculo utilizando menos features e evitando a dependência de dados históricos complexos. Para a construção do modelo, empregamos as seguintes variáveis: umidade (ESP/Arduino), temperatura (ESP/Arduino), dias sem chuva (Open-Meteo) e pressão atmosférica (Open-Meteo).
+              <br/><br/>A principal mudança estratégica foi simplificar a abordagem, sacrificando um leve ganho de precisão em prol de um modelo mais interpretável e auditável. Para isso, abandonamos o antigo modelo de caixa-preta (MLP) e adotamos uma árvore de decisão relativamente rasa. Esse formato funciona essencialmente como um gerador de regras que separam os dados com clareza, permitindo que especialistas do domínio validem o comportamento do modelo e forneçam feedback assertivo.
+              <br/><br/>Como resultado, a árvore obteve um Erro Absoluto Médio (MAE) de 0,125 em relação ao risco de fogo. Durante o processo de construção, constatamos também que a variável "bioma" não se mostrou relevante para o modelo, razão pela qual optamos por removê-la do conjunto de features.
+            </p>
+
+            <h2 style={{ color: '#a1a1aa', marginTop: '2rem' }}>Modelo de Previsão: <span>Árvore de Decisão Regressiva</span></h2>
+            <p style={{ marginTop: '0rem' }}>Erro Absoluto Médio (MAE): 0.125</p>
+            <img style={{maxWidth: '100%', height: 'auto' }}
+              src={Tree}
+              alt="Árvore de decisão representando o modelo de previsão de risco de fogo"
+            />
+            
+          </div>
         </div>
       </div>
     </section>

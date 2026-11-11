@@ -25,7 +25,7 @@ export default function Navbar() {
           <a href="#testes">Testes</a>
           <a href="#legislacao">Legislação</a>
           <a href="#trabalhos-relacionados">Trabalhos Relacionados</a>
-          <a href="#ia">Previsão de incêndios</a>
+          <a href="#ia">Previsão - IA</a>
           <a href="#demonstracao">Demonstração</a>
         </nav>
 

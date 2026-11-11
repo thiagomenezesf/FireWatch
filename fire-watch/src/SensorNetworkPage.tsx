@@ -699,6 +699,11 @@ export default function SensorNetworkPage() {
 
           </div>
 
+          <div>
+            <p style={{ fontSize: '14px', color: '#a1a1aa' }}>
+              Aguarde alguns segundos para ver a simulação
+            </p>
+          </div>
 
           <div
             style={{

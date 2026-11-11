@@ -384,6 +384,10 @@ a {
   color: transparent;
 }
 
+h2 span{
+  background: var(--gradient);
+}
+
 .hero-text > p {
   max-width: 610px;
   color: var(--text-secondary);
@@ -656,6 +660,13 @@ a {
   color: var(--text-secondary);
   line-height: 1.7;
   max-width: 580px;
+  margin-top: 22px;
+}
+
+.section-heading-ia{
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 1000px;
   margin-top: 22px;
 }
 
@@ -2060,6 +2071,22 @@ a {
   color: #f5f5f5;
 }
 
+.section-heading-ia h2 span{
+  display: inline-block;
+
+  margin-top: 7px;
+
+  background: linear-gradient(
+    90deg,
+    #ffb000,
+    #ff6a00,
+    #ef4444
+  );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 
 .ia-header h2 span {
   display: inline-block;
